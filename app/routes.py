@@ -9,7 +9,10 @@ from app import (
     db,
 )
 
-from app.models import User
+from app.models import (
+    User,
+    Movie,
+)
 
 from flask_login import (
     current_user,
@@ -21,12 +24,15 @@ from flask_login import (
 from app.forms import (
     LoginForm,
     RegistrationForm,
+    MovieForm,
 )
+
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.j2', title='Home')
+    return render_template('index.j2', title='home')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -53,10 +59,26 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, admin=False)
+        user = User(username=form.username.data,
+            admin=False, joined=datetime.utcnow)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Registered succesfully')
         return redirect(url_for('login'))
     return render_template('register.j2', title='register', form=form)
+
+@app.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    if current_user.admin:
+        movies = Movie.query.all()
+        form = MovieForm()
+        if form.validate_on_submit():
+            movie = Movie(title=form.title.data, year=form.year.data)
+            db.session.add(movie)
+            db.session.commit()
+            flash('Movie added succesfully')
+            return redirect(url_for('admin', title='admin', form=MovieForm()))
+        return render_template('admin.j2', title='admin', movies=movies, form=form)
+    return redirect(url_for('index'))

@@ -4,6 +4,7 @@ from wtforms import (
     PasswordField,
     BooleanField,
     SubmitField,
+    IntegerField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -29,3 +30,8 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Username already in use')
+
+class MovieForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    year = IntegerField('Year', validators=[DataRequired()])
+    submit = SubmitField('Add Movie')
