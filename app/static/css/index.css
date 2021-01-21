@@ -1,0 +1,16 @@
+.footer_out {
+    width: auto;
+    border: 1px solid;
+}
+
+.footer_in_left {
+    width: 49%;
+    float: left;
+    display: inline;
+}
+
+.footer_in_right {
+    width: 49%;
+    float: right;
+    display: inline;
+}

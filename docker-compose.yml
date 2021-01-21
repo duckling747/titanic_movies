@@ -1,0 +1,34 @@
+version: '3.5'
+
+services:
+  app:
+    image: titanic_app
+    build: ./
+    ports:
+      - 80:80
+    environment:
+      - PORT=80
+      - DB_URL=db
+      - DB_USER=kayttaja
+      - DB_PASSWORD=salasana
+      - DB_NAME=titanix-dev
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+    container_name: titanic
+  db:
+    image: postgres:alpine
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=salasana
+      - POSTGRES_USER=kayttaja
+      - POSTGRES_DB=titanix-dev
+    volumes:
+      - databasevolume:/var/lib/postgresql/data
+    container_name: db
+
+volumes:
+  databasevolume:
