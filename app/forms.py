@@ -11,6 +11,8 @@ from wtforms.validators import (
     ValidationError,
 )
 
+from app.models import User
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -23,7 +25,7 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField('Confirm password', validators=[EqualTo('password'), DataRequired()])
     submit = SubmitField('Register')
 
-    def validate_uname(self, username):
+    def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Username already in use')
