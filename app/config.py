@@ -12,10 +12,16 @@ class Config(object):
     PASSWORD = os.environ.get('DB_PASSWORD')
     DATABASE = os.environ.get('DB_NAME')
 
-    SQLALCHEMY_DATABASE_URI = f'postgresql://{USER}:{PASSWORD}@{HOST}:5432/{DATABASE}'
+    DATABASE_URL = os.environ.get('DATABASE_URL')
 
-    if os.environ.get('TESTING'):
+    if DATABASE_URL:
+        SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    elif os.environ.get('TESTING'):
         SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    else:
+        SQLALCHEMY_DATABASE_URI = f'postgresql://{USER}:{PASSWORD}@{HOST}:5432/{DATABASE}'
+
+    print(SQLALCHEMY_DATABASE_URI)
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
