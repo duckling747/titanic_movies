@@ -8,26 +8,25 @@ from app import (
     app,
     db,
 )
-
 from app.models import (
     User,
     Movie,
+    Actor,
 )
-
 from flask_login import (
     current_user,
     login_user,
     logout_user,
     login_required,
 )
-
 from app.forms import (
     LoginForm,
     RegistrationForm,
     MovieForm,
+    AdminRegistrationForm,
+    ActorForm,
 )
 
-from datetime import datetime
 
 @app.route('/')
 @app.route('/index')
@@ -59,8 +58,7 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data,
-            admin=False, joined=datetime.utcnow)
+        user = User(username=form.username.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -81,8 +79,16 @@ def admin_user():
     if not current_user.admin:
         return redirect(url_for('index'))
     users = User.query.all()
+    form = AdminRegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, admin=form.admin.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('User created successfully')
+        return redirect(url_for('admin_user'))
     return render_template('admin_user.j2', title='admin_user',
-        users=users)
+        users=users, form=form)
 
 @app.route('/admin/movies', methods=['GET', 'POST'])
 @login_required
@@ -99,3 +105,21 @@ def admin_movie():
         return redirect(url_for('admin_movie'))
     return render_template('admin_movie.j2', title='admin_movie',
         movies=movies, form=form)
+
+
+@app.route('/admin/actors', methods=['GET', 'POST'])
+@login_required
+def admin_actor():
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    actors = Actor.query.all()
+    form = ActorForm()
+    if form.validate_on_submit():
+        a = Actor(name=form.name.data)
+        db.session.add(a)
+        db.session.commit()
+        flash('Actor added to db')
+        return redirect(url_for('admin_actor'))
+    return render_template('admin_actor.j2', title='admin_actor',
+        actors=actors, form=form)
+

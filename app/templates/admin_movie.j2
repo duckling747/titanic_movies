@@ -21,14 +21,14 @@
             {{ form.hidden_tag() }}
             <p>
                 {{ form.title.label }}<br>
-                {{ form.title(size=48) }}
+                {{ form.title(size=32) }}
                 {% for e in form.title.errors %}
                     <div style="color: red;">{{ e }}</div>
                 {% endfor %}
             </p>
             <p>
                 {{ form.year.label }}<br>
-                {{ form.year(size=48) }}
+                {{ form.year(size=32) }}
                 {% for e in form.year.errors %}
                     <div style="color: red;">{{ e }}</div>
                 {% endfor %}

@@ -47,3 +47,13 @@ class MovieForm(FlaskForm):
         NumberRange(min=1500, max=datetime.today().year),
     ])
     submit = SubmitField('Add Movie')
+
+
+class AdminRegistrationForm(RegistrationForm):
+    admin = BooleanField('Is admin', default=False)
+
+
+class ActorForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Add actor')
+

@@ -3,12 +3,19 @@
 {% block content %}
 
     <h1>########### ~Admin view~ ###########</h1>
+
+    <h2>Admin navigation:</h2>
+    <nav>
+        <a href="{{ url_for('admin') }}">Admin root</a>
+        <a href="{{ url_for('admin_movie') }}">Movies</a>
+        <a href="{{ url_for('admin_user') }}">Users</a>
+        <a href="{{ url_for('admin_actor') }}">Actors</a>
+    </nav>
+
     <hr>
 
-    <a href="{{ url_for('admin_movie') }}">Movies</a>
-    <a href="{{ url_for('admin_user') }}">Users</a>
-
     {% block adminstuff %}
+        <h2>Latest reviews:</h2>
     {% endblock adminstuff %}
 
 {% endblock content %}

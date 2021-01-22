@@ -5,6 +5,9 @@
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='css/index.css') }}">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     </head>
     <body>
         <header>
@@ -20,20 +23,18 @@
                 </div>
                 {% if current_user.is_authenticated %}
                     Logged in as {{ current_user. username }}
-                {% else %}
                 {% endif %}
             </nav>
         </header>
         <hr>
         {% with messages=get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-                {% for m in messages %}
-                    <li>{{ m }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-        {% endif %}
+            {% if messages %}
+                <ul>
+                    {% for m in messages %}
+                        <li>{{ m }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         {% endwith %}
         {% block content %}
         {% endblock content %}

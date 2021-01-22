@@ -8,12 +8,14 @@ from werkzeug.security import (
 )
 from flask_login import UserMixin
 
+from datetime import datetime
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    admin = db.Column(db.Boolean)
-    joined = db.Column(db.DateTime)
+    admin = db.Column(db.Boolean, default=False)
+    joined = db.Column(db.DateTime, default=datetime.utcnow)
     reviews = db.relationship('Review', backref='user', lazy=True, uselist=True)
 
     def __repr__(self):

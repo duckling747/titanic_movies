@@ -18,6 +18,40 @@
                 {% endfor %}
             </table>
         {% endif %}
+        <h2>Add new:</h2>
+        <form action="" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.username.label }}<br>
+                {{ form.username(size=32) }}
+                {% for e in form.username.errors %}
+                    <div style="color: red;">{{ e }}</div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.password.label }}<br>
+                {{ form.password(size=32) }}
+                {% for e in form.password.errors %}
+                    <div style="color: red;">{{ e }}</div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.password2.label }}<br>
+                {{ form.password2(size=32) }}<br>
+                {% for error in form.password2.errors %}
+                    <div style="color: red;">[{{ error }}]</div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.admin() }} {{ form.admin.label }}<br>
+                {% for error in form.admin.errors %}
+                    <div style="color: red;">[{{ error }}]</div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
     </section>
 {% endblock adminstuff %}
 
