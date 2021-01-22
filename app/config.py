@@ -21,8 +21,6 @@ class Config(object):
     else:
         SQLALCHEMY_DATABASE_URI = f'postgresql://{USER}:{PASSWORD}@{HOST}:5432/{DATABASE}'
 
-    print(SQLALCHEMY_DATABASE_URI)
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

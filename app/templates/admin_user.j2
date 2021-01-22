@@ -1,0 +1,23 @@
+{% extends "admin.j2" %}
+{% block adminstuff %}
+    <section>
+        <h2>Users in db:</h2>
+        {% if users %}
+            <table>
+                <tr>
+                    <th>username</th>
+                    <th>admin</th>
+                    <th>joined</th>
+                </tr>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.admin }}</td>
+                    <td>{{ u.joined }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </section>
+{% endblock adminstuff %}
+

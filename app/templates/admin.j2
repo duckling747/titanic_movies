@@ -4,36 +4,11 @@
 
     <h1>########### ~Admin view~ ###########</h1>
     <hr>
-    <h2>Movies in db:</h2>
-    {% if movies %}
-        <table>
-        <tr>
-            <th>title</th>
-            <th>year</th>
-        </tr>
-        {% for m in movies %}
-        <tr>
-            <td>{{ m.title }}</td>
-            <td>{{ m.year }}</td>
-        </tr>
-        {% endfor %}
-        </table>
-    {% endif %}
-    <h2>Add new:</h2>
-    <form action="" method="POST" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.title.label }}<br>
-            {{ form.title(size=48) }}
-        </p>
-        <p>
-            {{ form.year.label }}<br>
-            {{ form.year(size=48) }}
-        </p>
-        <p>
-            {{ form.submit() }}
-        </p>
-    </form>
 
+    <a href="{{ url_for('admin_movie') }}">Movies</a>
+    <a href="{{ url_for('admin_user') }}">Users</a>
+
+    {% block adminstuff %}
+    {% endblock adminstuff %}
 
 {% endblock content %}

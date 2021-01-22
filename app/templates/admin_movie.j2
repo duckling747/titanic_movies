@@ -1,0 +1,41 @@
+{% extends "admin.j2" %}
+{% block adminstuff %}
+    <section>
+        <h2>Movies in db:</h2>
+        {% if movies %}
+            <table>
+                <tr>
+                    <th>title</th>
+                    <th>year</th>
+                </tr>
+                {% for m in movies %}
+                <tr>
+                    <td>{{ m.title }}</td>
+                    <td>{{ m.year }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        <h2>Add new:</h2>
+        <form action="" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(size=48) }}
+                {% for e in form.title.errors %}
+                    <div style="color: red;">{{ e }}</div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.year.label }}<br>
+                {{ form.year(size=48) }}
+                {% for e in form.year.errors %}
+                    <div style="color: red;">{{ e }}</div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
+    </section>
+{% endblock adminstuff %}

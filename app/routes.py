@@ -68,17 +68,34 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.j2', title='register', form=form)
 
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin')
 @login_required
 def admin():
-    if current_user.admin:
-        movies = Movie.query.all()
-        form = MovieForm()
-        if form.validate_on_submit():
-            movie = Movie(title=form.title.data, year=form.year.data)
-            db.session.add(movie)
-            db.session.commit()
-            flash('Movie added succesfully')
-            return redirect(url_for('admin', title='admin', form=MovieForm()))
-        return render_template('admin.j2', title='admin', movies=movies, form=form)
-    return redirect(url_for('index'))
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    return render_template('admin.j2', title='admin')
+
+@app.route('/admin/users', methods=['GET', 'POST'])
+@login_required
+def admin_user():
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    users = User.query.all()
+    return render_template('admin_user.j2', title='admin_user',
+        users=users)
+
+@app.route('/admin/movies', methods=['GET', 'POST'])
+@login_required
+def admin_movie():
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    movies = Movie.query.all()
+    form = MovieForm()
+    if form.validate_on_submit():
+        m = Movie(title=form.title.data, year=form.year.data)
+        db.session.add(m)
+        db.session.commit()
+        flash('Movie added to db')
+        return redirect(url_for('admin_movie'))
+    return render_template('admin_movie.j2', title='admin_movie',
+        movies=movies, form=form)
