@@ -7,14 +7,60 @@
                 <tr>
                     <th>title</th>
                     <th>year</th>
+                    <th>datetime added</th>
+                    <th>actors</th>
+                    <th>genres</th>
+                    <th>reviews</th>
                 </tr>
                 {% for m in movies %}
                 <tr>
                     <td>{{ m.title }}</td>
                     <td>{{ m.year }}</td>
+                    <td>{{ m.timestamp }}</td>
+                    <td>
+                        <ul>
+                        {% for a in m.actors %}
+                            <li>{{ a.name }}</li>
+                        {% else %}
+                            No actors...
+                        {% endfor %}
+                        </ul>
+                        <form action="{{ url_for('admin_movie_add_actor', id=m.id) }}" method="POST" novalidate>
+                            {{ add_actor.hidden_tag() }}
+                            <p>
+                                {{ add_actor.select() }}<br>
+                                {{ add_actor.submit() }}
+                            </p>
+                        </form>
+                    </td>
+                    <td>
+                        <ul>
+                        {% for g in m.genres %}
+                            <li>{{ g.name }}</li>
+                        {% else %}
+                            No genres...
+                        {% endfor %}
+                        </ul>
+                        <form action="{{ url_for('admin_movie_add_genre', id=m.id) }}" method="POST" novalidate>
+                            {{ add_genre.hidden_tag() }}
+                            <p>
+                                {{ add_genre.select() }}<br>
+                                {{ add_genre.submit() }}
+                            </p>
+                        </form>
+                    </td>
+                    <td>
+                    {% for r in m.reviews %}
+                        <li>{{ r.grade }}</li>
+                    {% else %}
+                        No reviews...
+                    {% endfor %}
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
+        {% else %}
+            <p>No movies yet...</p>
         {% endif %}
         <h2>Add new:</h2>
         <form action="" method="POST" novalidate>

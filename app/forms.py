@@ -5,6 +5,8 @@ from wtforms import (
     BooleanField,
     SubmitField,
     IntegerField,
+    TextField,
+    SelectField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -24,6 +26,7 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
 
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[
@@ -40,6 +43,7 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Username already in use')
 
+
 class MovieForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     year = IntegerField('Year', validators=[
@@ -49,6 +53,11 @@ class MovieForm(FlaskForm):
     submit = SubmitField('Add Movie')
 
 
+class AddToMovieForm(FlaskForm):
+    select = SelectField('Select', coerce=int)
+    submit = SubmitField('+')
+
+
 class AdminRegistrationForm(RegistrationForm):
     admin = BooleanField('Is admin', default=False)
 
@@ -56,4 +65,15 @@ class AdminRegistrationForm(RegistrationForm):
 class ActorForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     submit = SubmitField('Add actor')
+
+
+class ReviewForm(FlaskForm):
+    grade = IntegerField('Grade', validators=[DataRequired(), NumberRange(min=0, max=5)])
+    thoughts = TextField('Thoughts')
+    feelings = TextField('Feelings')
+
+
+class GenreForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Add genre')
 

@@ -44,6 +44,7 @@ class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256), index=True)
     year = db.Column(db.Integer, index=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     reviews = db.relationship('Review', backref='movie', lazy=True, uselist=True)
     actors = db.relationship('Actor', secondary=CAST, lazy='subquery',
         backref=db.backref('movies', lazy=True), uselist=True)
@@ -59,7 +60,7 @@ class Review(db.Model):
     grade = db.Column(db.Integer, index=True)
     thoughts = db.Column(db.Text)
     feelings = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
     movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'), nullable=False, index=True)
 

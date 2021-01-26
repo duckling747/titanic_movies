@@ -3,6 +3,7 @@ from flask import (
     redirect,
     flash,
     url_for,
+    request,
 )
 from app import (
     app,
@@ -12,6 +13,8 @@ from app.models import (
     User,
     Movie,
     Actor,
+    Review,
+    Genre,
 )
 from flask_login import (
     current_user,
@@ -25,13 +28,21 @@ from app.forms import (
     MovieForm,
     AdminRegistrationForm,
     ActorForm,
+    GenreForm,
+    AddToMovieForm,
 )
+
+from sqlalchemy.sql import func
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.j2', title='home')
+    top_graded = Movie.query.join(Review).group_by(Movie.id)\
+        .order_by(func.avg(Review.grade).label('average').desc()).limit(10).all()
+    newbies = Movie.query.order_by(Movie.timestamp.desc()).limit(10).all()
+    return render_template('index.j2', title='home',
+        top_graded=top_graded, newbies=newbies)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -71,7 +82,8 @@ def register():
 def admin():
     if not current_user.admin:
         return redirect(url_for('index'))
-    return render_template('admin.j2', title='admin')
+    reviews = Review.query.order_by(Review.timestamp.desc()).limit(10).all()
+    return render_template('admin.j2', title='admin', reviews=reviews)
 
 @app.route('/admin/users', methods=['GET', 'POST'])
 @login_required
@@ -90,6 +102,40 @@ def admin_user():
     return render_template('admin_user.j2', title='admin_user',
         users=users, form=form)
 
+@app.route('/admin/movies/<id>/actors', methods=['POST', 'DELETE'])
+@login_required
+def admin_movie_add_actor(id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    if request.method == 'DELETE':
+        # delete
+        return redirect(url_for('admin_movie'))
+    actor = request.form['select']
+    m = Movie.query.get(id)
+    actor = Actor.query.get(actor)
+    m.actors.append(actor)
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
+
+@app.route('/admin/movies/<id>/genres', methods=['POST', 'DELETE'])
+@login_required
+def admin_movie_add_genre(id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    if request.method == 'DELETE':
+        # delete
+        return redirect(url_for('admin_movie'))
+    genre = request.form['select']
+    m = Movie.query.get(id)
+    genre = Genre.query.get(genre)
+    m.genres.append(genre)
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
+
+
+
 @app.route('/admin/movies', methods=['GET', 'POST'])
 @login_required
 def admin_movie():
@@ -97,6 +143,11 @@ def admin_movie():
         return redirect(url_for('index'))
     movies = Movie.query.all()
     form = MovieForm()
+    add_actor = AddToMovieForm(obj=Actor)
+    add_actor.select.choices = [(a.id, a.name) for a in Actor.query.order_by('name')]
+    add_genre = AddToMovieForm(obj=Genre)
+    add_genre.select.choices = [(g.id, g.name) for g in Genre.query.order_by('name')]
+    
     if form.validate_on_submit():
         m = Movie(title=form.title.data, year=form.year.data)
         db.session.add(m)
@@ -104,7 +155,7 @@ def admin_movie():
         flash('Movie added to db')
         return redirect(url_for('admin_movie'))
     return render_template('admin_movie.j2', title='admin_movie',
-        movies=movies, form=form)
+        movies=movies, form=form, add_actor=add_actor, add_genre=add_genre)
 
 
 @app.route('/admin/actors', methods=['GET', 'POST'])
@@ -122,4 +173,20 @@ def admin_actor():
         return redirect(url_for('admin_actor'))
     return render_template('admin_actor.j2', title='admin_actor',
         actors=actors, form=form)
+
+@app.route('/admin/genres', methods=['GET', 'POST'])
+@login_required
+def admin_genre():
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    genres = Genre.query.all()
+    form = GenreForm()
+    if form.validate_on_submit():
+        g = Genre(name=form.name.data)
+        db.session.add(g)
+        db.session.commit()
+        flash('Genre added to db')
+        return redirect(url_for('admin_genre'))
+    return render_template('admin_genre.j2', title='admin_genre',
+        genres=genres, form=form)
 

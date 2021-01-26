@@ -8,10 +8,30 @@
     </section>
     <section>
         <h2>Top ten</h2>
-        <p>best ten movies go here</p>
+        {% if top_graded and top_graded[0].average != None %}
+            <ol>
+                {% for m in top_graded %}
+                    <li>
+                        title: {{ m.title }}, avg: {{ m.average }}
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>No reviews yet...</p>
+        {% endif %}
     </section>
     <section>
         <h2>New additions</h2>
-        <p>new movies added go another tests</p>
+        {% if newbies %}
+            <ul>
+                {% for n in newbies %}
+                    <li>
+                        {{ n.title }} {{ n.year }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No movies added...</p>
+        {% endif %}
     </section>
 {% endblock content %}
