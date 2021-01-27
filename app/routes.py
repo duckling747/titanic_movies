@@ -30,6 +30,7 @@ from app.forms import (
     ActorForm,
     GenreForm,
     AddToMovieForm,
+    DelFromMovieForm,
 )
 
 from sqlalchemy.sql import func
@@ -102,14 +103,11 @@ def admin_user():
     return render_template('admin_user.j2', title='admin_user',
         users=users, form=form)
 
-@app.route('/admin/movies/<id>/actors', methods=['POST', 'DELETE'])
+@app.route('/admin/movies/<id>/actors', methods=['POST'])
 @login_required
 def admin_movie_add_actor(id):
     if not current_user.admin:
         return redirect(url_for('index'))
-    if request.method == 'DELETE':
-        # delete
-        return redirect(url_for('admin_movie'))
     actor = request.form['select']
     m = Movie.query.get(id)
     actor = Actor.query.get(actor)
@@ -118,14 +116,11 @@ def admin_movie_add_actor(id):
     db.session.commit()
     return redirect(url_for('admin_movie'))
 
-@app.route('/admin/movies/<id>/genres', methods=['POST', 'DELETE'])
+@app.route('/admin/movies/<id>/genres', methods=['POST'])
 @login_required
 def admin_movie_add_genre(id):
     if not current_user.admin:
         return redirect(url_for('index'))
-    if request.method == 'DELETE':
-        # delete
-        return redirect(url_for('admin_movie'))
     genre = request.form['select']
     m = Movie.query.get(id)
     genre = Genre.query.get(genre)
@@ -134,7 +129,27 @@ def admin_movie_add_genre(id):
     db.session.commit()
     return redirect(url_for('admin_movie'))
 
+@app.route('/admin/movies/<movie_id>/actors/<actor_id>', methods=['POST'])
+@login_required
+def admin_movie_del_actor(movie_id, actor_id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    m = Movie.query.get(movie_id)
+    m.actors = [a for a in m.actors if a.id != int(actor_id)]
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
 
+@app.route('/admin/movies/<movie_id>/genres/<genre_id>', methods=['POST'])
+@login_required
+def admin_movie_del_genre(movie_id, genre_id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    m = Movie.query.get(movie_id)
+    m.genres = [g for g in m.genres if g.id != int(genre_id)]
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
 
 @app.route('/admin/movies', methods=['GET', 'POST'])
 @login_required
@@ -155,7 +170,8 @@ def admin_movie():
         flash('Movie added to db')
         return redirect(url_for('admin_movie'))
     return render_template('admin_movie.j2', title='admin_movie',
-        movies=movies, form=form, add_actor=add_actor, add_genre=add_genre)
+        movies=movies, form=form, add_actor=add_actor, add_genre=add_genre,
+        del_form = DelFromMovieForm())
 
 
 @app.route('/admin/actors', methods=['GET', 'POST'])

@@ -55,7 +55,11 @@ class MovieForm(FlaskForm):
 
 class AddToMovieForm(FlaskForm):
     select = SelectField('Select', coerce=int)
-    submit = SubmitField('+')
+    submit = SubmitField('Add')
+
+
+class DelFromMovieForm(FlaskForm):
+    submit = SubmitField('Del')
 
 
 class AdminRegistrationForm(RegistrationForm):

@@ -20,41 +20,65 @@
                     <td>
                         <ul>
                         {% for a in m.actors %}
-                            <li>{{ a.name }}</li>
+                            <li class="adm_list_entry">
+                                <div>{{ a.name }}</div>
+                                <form action="{{ url_for('admin_movie_del_actor', movie_id=m.id, actor_id=a.id) }}"
+                                    method="POST" novalidate>
+                                    {{ del_form.hidden_tag() }}
+                                    <div>{{ del_form.submit() }}</div>
+                                </form>
+                            </li>
                         {% else %}
-                            No actors...
+                            <li class="adm_list_entry">
+                                <div>No actors...</div>
+                            </li>
                         {% endfor %}
+                            <li class="adm_list_entry">
+                                <form action="{{ url_for('admin_movie_add_actor', id=m.id) }}" method="POST" novalidate>
+                                    {{ add_actor.hidden_tag() }}
+                                    <div>
+                                        {{ add_actor.select() }} {{ add_actor.submit() }}
+                                    </div>
+                                </form>
+                            </li>
                         </ul>
-                        <form action="{{ url_for('admin_movie_add_actor', id=m.id) }}" method="POST" novalidate>
-                            {{ add_actor.hidden_tag() }}
-                            <p>
-                                {{ add_actor.select() }}<br>
-                                {{ add_actor.submit() }}
-                            </p>
-                        </form>
                     </td>
                     <td>
                         <ul>
                         {% for g in m.genres %}
-                            <li>{{ g.name }}</li>
+                            <li class="adm_list_entry">
+                                <div>{{ g.name }}</div>
+                                <form action="{{ url_for('admin_movie_del_genre', movie_id=m.id, genre_id=g.id) }}"
+                                    method="POST" novalidate>
+                                    {{ del_form.hidden_tag() }}
+                                    <div>{{ del_form.submit() }}</div>
+                                </form>
+                            </li>
                         {% else %}
-                            No genres...
+                            <li class="adm_list_entry">
+                                <div>No genres...</div>
+                            </li>
                         {% endfor %}
+                            <li class="adm_list_entry">
+                                <form action="{{ url_for('admin_movie_add_genre', id=m.id) }}" method="POST" novalidate>
+                                    {{ add_genre.hidden_tag() }}
+                                    <div>
+                                        {{ add_genre.select() }} {{ add_genre.submit() }}
+                                    </div>
+                                </form>
+                            </li>
                         </ul>
-                        <form action="{{ url_for('admin_movie_add_genre', id=m.id) }}" method="POST" novalidate>
-                            {{ add_genre.hidden_tag() }}
-                            <p>
-                                {{ add_genre.select() }}<br>
-                                {{ add_genre.submit() }}
-                            </p>
-                        </form>
                     </td>
                     <td>
-                    {% for r in m.reviews %}
-                        <li>{{ r.grade }}</li>
-                    {% else %}
-                        No reviews...
-                    {% endfor %}
+                        <ul>
+                        {% for r in m.reviews %}
+                            <li>{{ r.grade }}</li>
+                        {% else %}
+                            <li class="adm_list_entry">
+                                <div>No reviews...</div>
+                            </li>
+                        {% endfor %}
+                        </ul>
                     </td>
                 </tr>
                 {% endfor %}

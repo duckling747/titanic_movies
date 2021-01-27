@@ -19,3 +19,14 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+.adm_list_entry {
+    display: flex;
+    border: 1px dashed;
+    margin: 5px 0px 5px 0px;
+}
+
+.adm_list_entry>* {
+    flex: 1;
+    margin: 5px;
+}
