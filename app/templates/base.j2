@@ -14,6 +14,7 @@
             <nav>
                 <div>Titanic Movies 
                     <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('browse') }}">Browse movies</a>
                     {% if current_user.is_anonymous %}
                         <a href="{{ url_for('login') }}">Login</a>
                         <a href="{{ url_for('register') }}">Register</a>
@@ -36,8 +37,10 @@
                 </ul>
             {% endif %}
         {% endwith %}
-        {% block content %}
-        {% endblock content %}
+        <main>
+            {% block content %}
+            {% endblock content %}
+        </main>
         <footer>
             <div class="footer_out">
                 <div class="footer_in_left">

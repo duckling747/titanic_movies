@@ -1,0 +1,22 @@
+{% extends "base.j2" %}
+{% block content %}
+
+    <h2>Browse movies</h2>
+    <dl>
+        {% set prevAlpha = '' %}
+        {% for m in movies %}
+
+            {% if m.title[0].upper() != prevAlpha %}
+                {% set prevAlpha = m.title[0].upper() %}
+                <dt>{{ prevAlpha }}</dt>
+            {% endif %}
+            <dd>
+                <a href="{{ url_for('movie_details', id=m.id) }}">{{ m.title }}, {{ m.year }}</a>
+            </dd>
+
+        {% else %}
+            No movies exist...
+        {% endfor %}
+    </dl>
+
+{% endblock content %}

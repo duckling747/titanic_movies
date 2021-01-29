@@ -30,3 +30,29 @@ body {
     flex: 1;
     margin: 5px;
 }
+
+.comma-sep-list {
+    display: inline;
+    list-style: none;
+    padding: 0;
+}
+
+.comma-sep-list li::after {
+    content: ", ";
+}
+
+.comma-sep-list li:last-child::after {
+    content: "";
+}
+
+.comma-sep-list li {
+    display: inline;
+}
+
+.review_text_area {
+    width: 30%;
+    line-height: 140%;
+    padding: 15px 10px;
+}
+
+

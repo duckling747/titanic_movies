@@ -5,7 +5,7 @@ from wtforms import (
     BooleanField,
     SubmitField,
     IntegerField,
-    TextField,
+    TextAreaField,
     SelectField,
 )
 from wtforms.validators import (
@@ -72,9 +72,13 @@ class ActorForm(FlaskForm):
 
 
 class ReviewForm(FlaskForm):
-    grade = IntegerField('Grade', validators=[DataRequired(), NumberRange(min=0, max=5)])
-    thoughts = TextField('Thoughts')
-    feelings = TextField('Feelings')
+    grade = IntegerField('Grade (within range 0-5)',
+        validators=[DataRequired(), NumberRange(min=0, max=5)])
+    thoughts = TextAreaField('What\'d you think about it?',
+        validators=[DataRequired(), Length(min=10)])
+    feelings = TextAreaField('How\'d you feel about it?',
+        validators=[DataRequired(), Length(min=10)])
+    submit = SubmitField('Send')
 
 
 class GenreForm(FlaskForm):

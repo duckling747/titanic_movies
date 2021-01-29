@@ -1,0 +1,75 @@
+{% extends "base.j2" %}
+{% block content %}
+
+<section id="movie_info_box">
+    <h2>{{ movie.title }}, {{ movie.year }}</h2>
+    <div>
+        <strong>Genres:</strong>
+        <ul class="comma-sep-list">
+            {% for g in movie.genres %}
+                <li>{{ g.name }}</li>
+            {% else %}
+                This movie doesn't have any genres listed
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <strong>Starring:</strong>
+        <ul class="comma-sep-list">
+            {% for a in movie.actors %}
+                <li>{{ a.name }}</li>
+            {% else %}
+                This movie doesn't have any actors listed
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<section id="movie_reviews_box">
+    <h3>Reviews:</h3>
+    <ul>
+        {% for r in movie.reviews %}
+            <li>
+                <h4>Reviewed by {{ r.user.username }}: {{ r.grade }}/5<br>
+                    <small>{{ r.timestamp }}</small>
+                </h4>
+                <p>{{ r.thoughts }}</p>
+                <p>{{ r.feelings }}</p>
+            </li>
+        {% else %}
+            No reviews yet...
+        {% endfor %}
+    </ul>
+</section>
+
+<section id="custom_review_box">
+    <h3>Write your own review:</h3>
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.grade.label }}<br>
+            {{ form.grade }}
+            {% for e in form.grade.errors %}
+                <div style="color: red;">{{ e }}</div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.thoughts.label }}<br>
+            {{ form.thoughts(cols=40, rows=8) }}
+            {% for e in form.thoughts.errors %}
+                <div style="color: red;">{{ e }}</div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.feelings.label }}<br>
+            {{ form.feelings(cols=40, rows=8) }}
+            {% for e in form.feelings.errors %}
+                <div style="color: red;">{{ e }}</div>
+            {% endfor %}
+        </p>
+        <p> {{ form.submit() }}</p>
+    </form>
+</section>
+
+{% endblock content %}

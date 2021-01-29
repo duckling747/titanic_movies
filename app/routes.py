@@ -31,16 +31,19 @@ from app.forms import (
     GenreForm,
     AddToMovieForm,
     DelFromMovieForm,
+    ReviewForm,
 )
 
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, desc
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    top_graded = Movie.query.join(Review).group_by(Movie.id)\
-        .order_by(func.avg(Review.grade).label('average').desc()).limit(10).all()
+    top_graded = Movie.query.join(Review).with_entities(Movie.title, func.round(func.avg(Review.grade), 2)\
+        .label('avg'))\
+        .group_by(Movie.id).order_by(desc('avg')).limit(10).all()
+
     newbies = Movie.query.order_by(Movie.timestamp.desc()).limit(10).all()
     return render_template('index.j2', title='home',
         top_graded=top_graded, newbies=newbies)
@@ -77,6 +80,28 @@ def register():
         flash('Registered succesfully')
         return redirect(url_for('login'))
     return render_template('register.j2', title='register', form=form)
+
+@app.route('/browse')
+def browse():
+    movies = Movie.query.order_by(Movie.title.asc()).all()
+    return render_template('browse.j2', title='browse', movies=movies)
+
+@app.route('/movies/<id>', methods=['GET', 'POST'])
+@login_required
+def movie_details(id):
+    m = Movie.query.outerjoin(Review).outerjoin(User).filter(Movie.id == id).first_or_404()
+    form = ReviewForm()
+    if form.validate_on_submit():
+        review = Review(
+            grade=form.grade.data, thoughts=form.thoughts.data,
+            feelings=form.feelings.data, user_id=current_user.id,
+            movie_id=id)
+        db.session.add(review)
+        db.session.commit()
+        flash('Review sent succesfully')
+        return redirect(url_for('movie_details', id=id))
+    return render_template('movie_details.j2', title='movie_details', movie=m,
+        form=form)
 
 @app.route('/admin')
 @login_required

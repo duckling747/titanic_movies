@@ -8,11 +8,11 @@
     </section>
     <section>
         <h2>Top ten</h2>
-        {% if top_graded and top_graded[0].average != None %}
+        {% if top_graded %}
             <ol>
                 {% for m in top_graded %}
                     <li>
-                        title: {{ m.title }}, avg: {{ m.average }}
+                        title: {{ m.title }}, grade average: {{ m.avg }}
                     </li>
                 {% endfor %}
             </ol>
