@@ -18,17 +18,7 @@
 body {
     overflow-y: auto;
     overflow-x: hidden;
-}
-
-.adm_list_entry {
-    display: flex;
-    border: 1px dashed;
-    margin: 5px 0px 5px 0px;
-}
-
-.adm_list_entry>* {
-    flex: 1;
-    margin: 5px;
+    text-align: center;
 }
 
 .comma-sep-list {
@@ -55,4 +45,55 @@ body {
     padding: 15px 10px;
 }
 
+dt {
+    background: #1c78ac;
+    color: #FFF;
+    font: bold;
+    font-size: larger;
+    line-height: 200%;
+    margin: 0;
+    padding: 4px 0 4px 12px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: -1px;
+}
 
+dd {
+    line-height: 175%;
+    font: normal;
+    font-size: medium;
+    margin: 0;
+    padding: 0 0 0 12px;
+    white-space: nowrap;
+}
+
+.flex-entry {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-entry>* {
+    flex: 1 auto;
+    justify-content: space-around;
+    margin: 0px 10px 0px 10px;
+}
+
+.adm-list {
+    border: 1px dashed;
+    margin: 5px 0 5px 0;
+    padding: 5px 0 5px 0;
+}
+
+.flex-entry>li {
+    list-style: none;
+}
+
+td {
+    padding: 0 5px 0 5px;
+    border: 1px dotted;
+}
+
+.custom-review-component {
+    padding: 5px;
+    margin: 5px;
+}

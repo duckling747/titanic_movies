@@ -3,12 +3,12 @@
 
     <h2>Browse movies</h2>
     <dl>
-        {% set prevAlpha = '' %}
+        {% set ns = namespace(prev = ' ') %}
         {% for m in movies %}
 
-            {% if m.title[0].upper() != prevAlpha %}
-                {% set prevAlpha = m.title[0].upper() %}
-                <dt>{{ prevAlpha }}</dt>
+            {% if m.title[0].upper() != ns.prev %}
+                {% set ns.prev = m.title[0].upper() %}
+                <dt>{{ ns.prev }}</dt>
             {% endif %}
             <dd>
                 <a href="{{ url_for('movie_details', id=m.id) }}">{{ m.title }}, {{ m.year }}</a>

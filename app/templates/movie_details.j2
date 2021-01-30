@@ -28,47 +28,55 @@
 
 <section id="movie_reviews_box">
     <h3>Reviews:</h3>
-    <ul>
+    <div class="flex-entry">
         {% for r in movie.reviews %}
-            <li>
+            <div>
                 <h4>Reviewed by {{ r.user.username }}: {{ r.grade }}/5<br>
                     <small>{{ r.timestamp }}</small>
                 </h4>
-                <p>{{ r.thoughts }}</p>
-                <p>{{ r.feelings }}</p>
-            </li>
+                <div>
+                    <h5>Thoughts:</h5>
+                    <p>{{ r.thoughts }}</p>
+                </div>
+                <div>
+                    <h5>Feelings:</h5>
+                    <p>{{ r.feelings }}</p>
+                </div>
+            </div>
         {% else %}
-            No reviews yet...
+            <div>No reviews yet...</div>
         {% endfor %}
-    </ul>
+    </div>
 </section>
 
 <section id="custom_review_box">
     <h3>Write your own review:</h3>
     <form action="" method="POST" novalidate>
         {{ form.hidden_tag() }}
-        <p>
+        <p class="custom-review-component">
             {{ form.grade.label }}<br>
             {{ form.grade }}
             {% for e in form.grade.errors %}
                 <div style="color: red;">{{ e }}</div>
             {% endfor %}
         </p>
-        <p>
-            {{ form.thoughts.label }}<br>
-            {{ form.thoughts(cols=40, rows=8) }}
-            {% for e in form.thoughts.errors %}
-                <div style="color: red;">{{ e }}</div>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.feelings.label }}<br>
-            {{ form.feelings(cols=40, rows=8) }}
-            {% for e in form.feelings.errors %}
-                <div style="color: red;">{{ e }}</div>
-            {% endfor %}
-        </p>
-        <p> {{ form.submit() }}</p>
+        <div class="flex-entry">
+            <p>
+                {{ form.thoughts.label }}<br>
+                {{ form.thoughts(cols=40, rows=8) }}
+                {% for e in form.thoughts.errors %}
+                    <div style="color: red;">{{ e }}</div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.feelings.label }}<br>
+                {{ form.feelings(cols=40, rows=8) }}
+                {% for e in form.feelings.errors %}
+                    <div style="color: red;">{{ e }}</div>
+                {% endfor %}
+            </p>
+        </div>
+        <p class="custom-review-component">{{ form.submit() }}</p>
     </form>
 </section>
 

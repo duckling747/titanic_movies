@@ -18,13 +18,16 @@
     {% block adminstuff %}
         <h2>Latest reviews:</h2>
         {% if reviews %}
-            <ul>
+            <div>
                 {% for r in reviews %}
-                    <li>
-                        {{ r }}
-                    </li>
+                    <div class="flex-entry adm-list">
+                        <div><strong>user:</strong> {{ r.user.username }}</div>
+                        <div><strong>grade:</strong> {{ r.grade }}</div>
+                        <div><strong>thoughts:</strong> {{ r.thoughts[0:20] }}...</div>
+                        <div><strong>feelings:</strong> {{ r.feelings[0:20] }}...</div>
+                    </div>
                 {% endfor %}
-            </ul>
+            </div>
         {% else %}
             <p>No reviews yet...</p>
         {% endif %}

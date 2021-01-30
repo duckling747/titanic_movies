@@ -40,7 +40,8 @@ from sqlalchemy.sql import func, desc
 @app.route('/')
 @app.route('/index')
 def index():
-    top_graded = Movie.query.join(Review).with_entities(Movie.title, func.round(func.avg(Review.grade), 2)\
+    top_graded = Movie.query.join(Review)\
+        .with_entities(Movie.title, Movie.year, Movie.id, func.round(func.avg(Review.grade), 2)\
         .label('avg'))\
         .group_by(Movie.id).order_by(desc('avg')).limit(10).all()
 

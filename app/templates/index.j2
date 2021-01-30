@@ -2,17 +2,20 @@
 
 {% block content %}
 
-    <section>
+    <section class="banner">
         <h2>Welcome text or banner</h2>
         <p>some kind of welcome text or a banner goes here</p>
     </section>
-    <section>
-        <h2>Top ten</h2>
+    <section class="banner">
+        <h2>Top graded</h2>
         {% if top_graded %}
             <ol>
                 {% for m in top_graded %}
                     <li>
-                        title: {{ m.title }}, grade average: {{ m.avg }}
+                        <a href="{{ url_for('movie_details', id=m.id) }}">
+                            {{ m.title }}, {{ m.year }}
+                        </a>
+                        (grade average {{ m.avg }})
                     </li>
                 {% endfor %}
             </ol>
@@ -20,13 +23,14 @@
             <p>No reviews yet...</p>
         {% endif %}
     </section>
-    <section>
+    <section class="banner">
         <h2>New additions</h2>
         {% if newbies %}
             <ul>
                 {% for n in newbies %}
                     <li>
-                        {{ n.title }} {{ n.year }}
+                        {{ n.timestamp.date() }}: 
+                        <a href="{{ url_for('movie_details', id=n.id) }}">{{ n.title }}, {{ n.year }}</a>
                     </li>
                 {% endfor %}
             </ul>
