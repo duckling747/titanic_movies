@@ -2,10 +2,11 @@
 
 {% block content %}
 
-    <section class="banner">
-        <h2>Welcome text or banner</h2>
-        <p>some kind of welcome text or a banner goes here</p>
+    <section id="welcome_banner" class="banner">
+        <h2>Welcome to Titanic Movies!</h2>
+        <p>Your go to place for the best an most coherent reviews of movies all kinds.</p>
     </section>
+
     <section class="banner">
         <h2>Top graded</h2>
         {% if top_graded %}
@@ -23,6 +24,7 @@
             <p>No reviews yet...</p>
         {% endif %}
     </section>
+
     <section class="banner">
         <h2>New additions</h2>
         {% if newbies %}

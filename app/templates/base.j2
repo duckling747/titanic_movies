@@ -2,14 +2,49 @@
 <html>
     <head>
         <title>Titanic Movies</title>
+
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/librebaskerville-bold-webfont.woff2') }}"
+            type="font/woff2" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/librebaskerville-italic-webfont.woff2') }}"
+            type="font/woff2" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/librebaskerville-regular-webfont.woff2') }}"
+            type="font/woff2" crossorigin="anonymous">
+
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-bold-webfont.woff2') }}"
+            type="font/woff2" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-bolditalic-webfont.woff2') }}"
+            type="font/woff2" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-italic-webfont.woff2') }}"
+            type="font/woff2" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-regular-webfont.woff2') }}"
+            type="font/woff2" crossorigin="anonymous">
+
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/librebaskerville-bold-webfont.woff') }}"
+            type="font/woff" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/librebaskerville-italic-webfont.woff') }}"
+            type="font/woff" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/librebaskerville-regular-webfont.woff') }}"
+            type="font/woff" crossorigin="anonymous">
+
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-bold-webfont.woff') }}"
+            type="font/woff" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-bolditalic-webfont.woff') }}"
+            type="font/woff" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-italic-webfont.woff') }}"
+            type="font/woff" crossorigin="anonymous">
+        <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-regular-webfont.woff') }}"
+            type="font/woff" crossorigin="anonymous">
+        
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='css/index.css') }}">
-        
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
+
     </head>
-    <body>
+    <body class="color-bg-main">
         <header>
             <nav>
                 <div>Titanic Movies 
@@ -27,7 +62,6 @@
                 {% endif %}
             </nav>
         </header>
-        <hr>
         {% with messages=get_flashed_messages() %}
             {% if messages %}
                 <ul>

@@ -90,7 +90,16 @@ def browse():
 @app.route('/movies/<id>', methods=['GET', 'POST'])
 @login_required
 def movie_details(id):
-    m = Movie.query.outerjoin(Review).outerjoin(User).filter(Movie.id == id).first_or_404()
+    subq = Review.query\
+        .filter(Review.movie_id == int(id))\
+        .order_by(Review.timestamp.desc())\
+        .limit(2)\
+        .subquery().lateral()
+    print(str(subq))
+    m = Movie.query.outerjoin(subq, subq.c.movie_id == Movie.id).outerjoin(User)\
+        .filter(Movie.id == id)\
+        .group_by(Movie.id)\
+        .first_or_404()
     form = ReviewForm()
     if form.validate_on_submit():
         review = Review(

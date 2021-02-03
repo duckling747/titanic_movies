@@ -28,30 +28,33 @@
 
 <section id="movie_reviews_box">
     <h3>Reviews:</h3>
-    <div class="flex-entry">
-        {% for r in movie.reviews %}
-            <div>
-                <h4>Reviewed by {{ r.user.username }}: {{ r.grade }}/5<br>
-                    <small>{{ r.timestamp }}</small>
-                </h4>
-                <div>
-                    <h5>Thoughts:</h5>
-                    <p>{{ r.thoughts }}</p>
+    {% if movie.reviews %}
+        <div class="flex-entry">
+            {% for r in movie.reviews %}
+                <div class="single-review">
+                    <h4>Review by {{ r.user.username }}: {{ r.grade }}/5<br>
+                        <small>{{ r.timestamp }}</small>
+                    </h4>
+                    <div>
+                        <h5>Thoughts:</h5>
+                        <p>{{ r.thoughts }}</p>
+                    </div>
+                    <div>
+                        <h5>Feelings:</h5>
+                        <p>{{ r.feelings }}</p>
+                    </div>
                 </div>
-                <div>
-                    <h5>Feelings:</h5>
-                    <p>{{ r.feelings }}</p>
-                </div>
-            </div>
-        {% else %}
-            <div>No reviews yet...</div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+        <a>Read more</a>
+    {% else %}
+        <div>No reviews yet...</div>
+    {% endif %}
 </section>
 
 <section id="custom_review_box">
     <h3>Write your own review:</h3>
-    <form action="" method="POST" novalidate>
+    <form action="" method="POST">
         {{ form.hidden_tag() }}
         <p class="custom-review-component">
             {{ form.grade.label }}<br>

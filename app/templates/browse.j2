@@ -8,7 +8,7 @@
 
             {% if m.title[0].upper() != ns.prev %}
                 {% set ns.prev = m.title[0].upper() %}
-                <dt>{{ ns.prev }}</dt>
+                <dt class="color-bg-secondary">{{ ns.prev }}</dt>
             {% endif %}
             <dd>
                 <a href="{{ url_for('movie_details', id=m.id) }}">{{ m.title }}, {{ m.year }}</a>

@@ -1,6 +1,130 @@
-.footer_out {
-    width: auto;
-    border: 1px solid;
+@font-face {
+    font-family: 'libre_baskerville';
+    src: url('/static/fonts/librebaskerville-bold-webfont.woff2') format('woff2'),
+         url('/static/fonts/librebaskerville-bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'libre_baskerville';
+    src: url('/static/fonts/librebaskerville-italic-webfont.woff2') format('woff2'),
+         url('/static/fonts/librebaskerville-italic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'libre_baskerville';
+    src: url('/static/fonts/librebaskerville-regular-webfont.woff2') format('woff2'),
+         url('/static/fonts/librebaskerville-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'spacemono';
+    src: url('/static/fonts/spacemono-bold-webfont.woff2') format('woff2'),
+         url('/static/fonts/spacemono-bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'spacemono';
+    src: url('/static/fonts/spacemono-bolditalic-webfont.woff2') format('woff2'),
+         url('/static/fonts/spacemono-bolditalic-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'spacemono';
+    src: url('/static/fonts/spacemono-italic-webfont.woff2') format('woff2'),
+         url('/static/fonts/spacemono-italic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'spacemono';
+    src: url('/static/fonts/spacemono-regular-webfont.woff2') format('woff2'),
+         url('/static/fonts/spacemono-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+    background: url('/static/images/background.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 100%;
+    -moz-text-rendering: optimizeLegibility;
+}
+
+body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0 auto;
+    max-width: 80%;
+    min-height: 100%;
+    line-height: 1.5;
+    padding: 4em 1em;
+    opacity: 95%;
+    display: flex;
+    flex-direction: column;
+}
+
+header, footer {
+    flex-shrink: 0;
+}
+
+header {
+    border-bottom: 1px solid;
+}
+
+footer {
+    border-top: 1px solid;
+}
+
+footer, small {
+    font-size: x-small;
+}
+
+h1, h2, h3, h4, h5, h6, strong, .header-font {
+    font-family: 'libre_baskerville';
+    font-size: large;
+}
+
+h1, h2 {
+    font-size: x-large;
+}
+
+.body-font, body, a {
+    font-family: 'spacemono';
+    font-size: small;
+}
+
+.color-link, a {
+    color: #b63225;
+}
+
+.color-main {
+    color: #004e7c;
+}
+
+.color-secondary {
+    color: #591b0c;
+}
+
+.color-bg-main {
+    background-color: #dce1e4;
+}
+
+.color-bg-secondary {
+    background-color: #5d6059;
 }
 
 .footer_in_left {
@@ -13,12 +137,6 @@
     width: 49%;
     float: right;
     display: inline;
-}
-
-body {
-    overflow-y: auto;
-    overflow-x: hidden;
-    text-align: center;
 }
 
 .comma-sep-list {
@@ -46,7 +164,6 @@ body {
 }
 
 dt {
-    background: #1c78ac;
     color: #FFF;
     font: bold;
     font-size: larger;
@@ -96,4 +213,19 @@ td {
 .custom-review-component {
     padding: 5px;
     margin: 5px;
+}
+
+section#movie_info_box {
+    border-bottom: 1px solid;
+}
+
+section#custom_review_box {
+}
+
+section#movie_reviews_box {
+}
+
+.single-review {
+    padding-left: 10px;
+    margin-bottom: 20px;
 }
