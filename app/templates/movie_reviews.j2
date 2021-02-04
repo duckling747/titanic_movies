@@ -1,0 +1,87 @@
+{% extends "base.j2" %}
+{% block content %}
+
+<h2>All reviews of {{ movie.title }}, {{ movie.year }}</h2>
+
+<aside class="filter-box">
+    <h3>Filters:</h3>
+    <form action="" method="GET">
+        <div class="flex-entry">
+            <p>
+                <label for="inputmingrade">Min grade</label>
+                <input id="inputmingrade" type="number" name="mingrade" max=5 min=0 />
+            </p>
+            <p>
+                <label for="inputmaxgrade">Max grade</label>
+                <input id="inputmaxgrade" type="number" name="maxgrade" max=5 min=0 />
+            </p>
+            <p>
+                <label for="inputmindate">Min date</label>
+                <input id="inputmindate" type="date" name="mindate" />
+            </p>
+            <p>
+                <label for="inputmaxdate">Max date</label>
+                <input id="inputmaxdate" type="date" name="maxdate" />
+            </p>
+        </div>
+        <div class="flex-entry">
+            <p>
+                <label for="sortorderdate">Sort by date</label>
+                <input id="sortorderdate" type="radio" name="sortorder" value=1 />
+                <label for="sortordergrade">Sort by grade</label>
+                <input id="sortordergrade" type="radio" name="sortorder" value=0 />
+            </p>
+        </div>
+        <p>
+            <input type="submit" value="Apply" />
+        </p>
+    </form>
+</aside>
+
+<aside>
+    <strong>In effect:</strong>
+    <div>sort order:
+        {% if sort_by == 0 %}
+            grade (descending)
+        {% else %}
+            date (descending)
+        {% endif %}
+    </div>
+    <div>date between: [{{ min_date }}, {{ max_date }}]</div>
+    <div>grade between: [{{ min_grade }}, {{ max_grade }}]</div>
+</aside>
+
+<ul class="flex-entry">
+    {% for review in reviews %}
+        <li>
+            <h4>Review by {{ review.user.username }}: {{ review.grade }}/5<br>
+                <small>{{ review.timestamp }}</small>
+            </h4>
+            <div>
+                <h5>Thoughts:</h5>
+                <p>{{ review.thoughts }}</p>
+            </div>
+            <div>
+                <h5>Feelings:</h5>
+                <p>{{ review.feelings }}</p>
+            </div>
+        </li>
+    {% else %}
+        <div>
+            No reviews!
+        </div>
+    {% endfor %}
+</ul>
+<div style="text-align: center;">
+    page: {{ current_page }} of {{ total_pages }}
+</div>
+<p style="text-align: center;">
+    {% if prev_page %}
+        <a href="{{ prev_page }}">Previous page</a>
+    {% endif %}
+    {% if next_page %}
+        <a href="{{ next_page}}">Next page</a>
+    {% endif %}
+</p>
+
+{% endblock content %}

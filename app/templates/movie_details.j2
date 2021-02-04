@@ -28,11 +28,11 @@
 
 <section id="movie_reviews_box">
     <h3>Reviews:</h3>
-    {% if movie.reviews %}
+    {% if reviews %}
         <div class="flex-entry">
-            {% for r in movie.reviews %}
+            {% for r in reviews %}
                 <div class="single-review">
-                    <h4>Review by {{ r.user.username }}: {{ r.grade }}/5<br>
+                    <h4>Review by {{ r.username }}: {{ r.grade }}/5<br>
                         <small>{{ r.timestamp }}</small>
                     </h4>
                     <div>
@@ -46,7 +46,7 @@
                 </div>
             {% endfor %}
         </div>
-        <a>Read more</a>
+        <a href="{{ url_for('reviews', id=movie.id) }}">Read all reviews</a>
     {% else %}
         <div>No reviews yet...</div>
     {% endif %}
@@ -60,22 +60,22 @@
             {{ form.grade.label }}<br>
             {{ form.grade }}
             {% for e in form.grade.errors %}
-                <div style="color: red;">{{ e }}</div>
+                <div class="errormsg">{{ e }}</div>
             {% endfor %}
         </p>
-        <div class="flex-entry">
+        <div>
             <p>
                 {{ form.thoughts.label }}<br>
                 {{ form.thoughts(cols=40, rows=8) }}
                 {% for e in form.thoughts.errors %}
-                    <div style="color: red;">{{ e }}</div>
+                    <div class="errormsg">{{ e }}</div>
                 {% endfor %}
             </p>
             <p>
                 {{ form.feelings.label }}<br>
                 {{ form.feelings(cols=40, rows=8) }}
                 {% for e in form.feelings.errors %}
-                    <div style="color: red;">{{ e }}</div>
+                    <div class="errormsg">{{ e }}</div>
                 {% endfor %}
             </p>
         </div>

@@ -9,14 +9,14 @@
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}
             {% for e in form.username.errors %}
-                <div style="color: red;">{{ e }}</div>
+                <div class="errormsg">{{ e }}</div>
             {% endfor %}
         </p>
         <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}
             {% for e in form.password.errors %}
-                <div style="color: red;">{{ e }}</div>
+                <div class="errormsg">{{ e }}</div>
             {% endfor %}
         </p>
         <p>

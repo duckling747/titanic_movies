@@ -4,6 +4,7 @@ from flask import (
     flash,
     url_for,
     request,
+    abort,
 )
 from app import (
     app,
@@ -35,6 +36,8 @@ from app.forms import (
 )
 
 from sqlalchemy.sql import func, desc
+
+from datetime import datetime
 
 
 @app.route('/')
@@ -90,16 +93,14 @@ def browse():
 @app.route('/movies/<id>', methods=['GET', 'POST'])
 @login_required
 def movie_details(id):
-    subq = Review.query\
-        .filter(Review.movie_id == int(id))\
-        .order_by(Review.timestamp.desc())\
+    m = Movie.query.get_or_404(id)
+    reviews = Review.query\
+        .join(User)\
+        .with_entities(Review.grade, Review.timestamp, Review.feelings, Review.thoughts, User.username)\
+        .filter(Review.movie_id == id)\
         .limit(2)\
-        .subquery().lateral()
-    print(str(subq))
-    m = Movie.query.outerjoin(subq, subq.c.movie_id == Movie.id).outerjoin(User)\
-        .filter(Movie.id == id)\
-        .group_by(Movie.id)\
-        .first_or_404()
+        .all()
+
     form = ReviewForm()
     if form.validate_on_submit():
         review = Review(
@@ -110,8 +111,48 @@ def movie_details(id):
         db.session.commit()
         flash('Review sent succesfully')
         return redirect(url_for('movie_details', id=id))
-    return render_template('movie_details.j2', title='movie_details', movie=m,
-        form=form)
+    return render_template('movie_details.j2', title='movie_details',
+        movie=m, reviews=reviews, form=form)
+
+def to_date(datestr):
+    return datetime.strptime(datestr, '%Y-%m-%d').date()
+
+@app.route('/movies/<id>/reviews')
+def reviews(id):
+    m = Movie.query\
+        .with_entities(Movie.title, Movie.year).filter(Movie.id == id).first_or_404()
+    page = request.args.get('page', default=1, type=int)
+    min_grade = request.args.get('mingrade', default=0, type=int)
+    max_grade = request.args.get('maxgrade', default=5, type=int)
+    min_date = request.args.get('mindate', default=to_date('1800-01-01'), type=to_date)
+    max_date = request.args.get('maxdate', default=datetime.today().date(), type=to_date)
+    sort_by = request.args.get('sortorder', default=0, type=int)
+    
+    reviews = Review.query\
+        .filter(Review.movie_id == id, Review.grade <= max_grade, Review.grade >= min_grade,
+            Review.timestamp <= max_date, Review.timestamp >= min_date)
+    if sort_by == 0:
+        reviews = reviews.order_by(Review.grade.desc())
+    elif sort_by == 1:
+        reviews = reviews.order_by(Review.timestamp.desc())
+    else:
+        abort(404)
+
+    reviews = reviews.paginate(page, 2, False)
+
+    next_page = url_for('reviews', id=id, mingrade=min_grade,
+        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
+        sortorder=sort_by, page=reviews.next_num)\
+    if reviews.has_next else None
+    prev_page = url_for('reviews', id=id, mingrade=min_grade,
+        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
+        sortorder=sort_by, page=reviews.prev_num)\
+    if reviews.has_prev else None
+
+    return render_template('movie_reviews.j2', title='reviews',
+        min_grade=min_grade, max_grade=max_grade, min_date=min_date, max_date=max_date,
+        sort_by=sort_by, current_page=reviews.page, total_pages=reviews.pages,
+        movie=m, reviews=reviews.items, next_page=next_page, prev_page=prev_page)
 
 @app.route('/admin')
 @login_required

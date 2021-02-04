@@ -7,22 +7,22 @@
         <p>
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}<br>
-            {% for error in form.username.errors %}
-                <div style="color: red;">[{{ error }}]</div>
+            {% for e in form.username.errors %}
+                <div class="errormsg">{{ e }}</div>
             {% endfor %}
         </p>
         <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-                <div style="color: red;">[{{ error }}]</div>
+            {% for e in form.password.errors %}
+                <div class="errormsg">{{ e }}</div>
             {% endfor %}
         </p>
         <p>
             {{ form.password2.label }}<br>
             {{ form.password2(size=32) }}<br>
-            {% for error in form.password2.errors %}
-                <div style="color: red;">[{{ error }}]</div>
+            {% for e in form.password2.errors %}
+                <div class="errormsg">{{ e }}</div>
             {% endfor %}
         </p>
         <p>
