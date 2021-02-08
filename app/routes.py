@@ -133,8 +133,9 @@ def reviews(id):
         .filter(Review.movie_id == id, Review.grade <= max_grade, Review.grade >= min_grade,
             Review.timestamp <= max_date, Review.timestamp >= min_date)
     if textcontains:
-        ftextcontains = f'%{textcontains}%'
-        reviews = reviews.filter(Review.feelings.ilike(ftextcontains) | Review.thoughts.ilike(ftextcontains))
+        ftextcontains = func.lower(textcontains)
+        reviews = reviews.filter(func.lower(Review.feelings).contains(ftextcontains)
+            | func.lower(Review.thoughts).contains(ftextcontains))
 
     if sort_by == 0:
         reviews = reviews.order_by(Review.grade.desc())
