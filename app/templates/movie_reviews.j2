@@ -32,6 +32,10 @@
                 <input id="sortordergrade" type="radio" name="sortorder" value=0 />
             </p>
         </div>
+        <p id="text-search">
+            <label for="textcontains">Contains</label>
+            <input id="textcontains" type="text" name="textcontains" />
+        </p>
         <p>
             <input type="submit" value="Apply" />
         </p>
@@ -49,6 +53,7 @@
     </div>
     <div>date between: [{{ min_date }}, {{ max_date }}]</div>
     <div>grade between: [{{ min_grade }}, {{ max_grade }}]</div>
+    <div>text contains: {{ textcontains }}</div>
 </aside>
 
 <ul class="flex-entry">

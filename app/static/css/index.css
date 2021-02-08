@@ -234,3 +234,22 @@ section#movie_reviews_box {
     padding-left: 10px;
     margin-bottom: 20px;
 }
+
+div#main-image {
+    width: 100%;
+    height: auto;
+    background-image: url('/static/images/banner_small.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+div#main-image>* {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+
+p#text-search input {
+    width: 85%;
+}

@@ -127,10 +127,15 @@ def reviews(id):
     min_date = request.args.get('mindate', default=to_date('1800-01-01'), type=to_date)
     max_date = request.args.get('maxdate', default=datetime.today().date(), type=to_date)
     sort_by = request.args.get('sortorder', default=0, type=int)
+    textcontains = request.args.get('textcontains', default='', type=str)
     
     reviews = Review.query\
         .filter(Review.movie_id == id, Review.grade <= max_grade, Review.grade >= min_grade,
             Review.timestamp <= max_date, Review.timestamp >= min_date)
+    if textcontains:
+        ftextcontains = f'%{textcontains}%'
+        reviews = reviews.filter(Review.feelings.ilike(ftextcontains) | Review.thoughts.ilike(ftextcontains))
+
     if sort_by == 0:
         reviews = reviews.order_by(Review.grade.desc())
     elif sort_by == 1:
@@ -151,7 +156,7 @@ def reviews(id):
 
     return render_template('movie_reviews.j2', title='reviews',
         min_grade=min_grade, max_grade=max_grade, min_date=min_date, max_date=max_date,
-        sort_by=sort_by, current_page=reviews.page, total_pages=reviews.pages,
+        sort_by=sort_by, textcontains=textcontains, current_page=reviews.page, total_pages=reviews.pages,
         movie=m, reviews=reviews.items, next_page=next_page, prev_page=prev_page)
 
 @app.route('/admin')
