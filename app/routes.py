@@ -124,7 +124,7 @@ def to_date(datestr):
 def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date):
     reviews = Review.query\
         .filter(Review.movie_id == id, Review.grade <= max_grade, Review.grade >= min_grade,
-            Review.timestamp <= max_date, Review.timestamp >= min_date)
+            func.date(Review.timestamp) <= max_date, func.date(Review.timestamp) >= min_date)
     if textcontains:
         ftextcontains = func.lower(textcontains)
         reviews = reviews.filter(func.lower(Review.feelings).contains(ftextcontains)
