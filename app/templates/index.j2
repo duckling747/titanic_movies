@@ -9,37 +9,39 @@
         </div>
     </section>
 
-    <section class="banner">
-        <h2>Top graded</h2>
-        {% if top_graded %}
-            <ol>
-                {% for m in top_graded %}
-                    <li>
-                        <a href="{{ url_for('movie_details', id=m.id) }}">
-                            {{ m.title }}, {{ m.year }}
-                        </a>
-                        (grade average {{ m.avg }})
-                    </li>
-                {% endfor %}
-            </ol>
-        {% else %}
-            <p>No reviews yet...</p>
-        {% endif %}
-    </section>
+    <div class="flex-entry">
+        <section class="banner">
+            <h2>Top graded</h2>
+            {% if top_graded %}
+                <ol>
+                    {% for m in top_graded %}
+                        <li>
+                            <a href="{{ url_for('movie_details', id=m.id) }}">
+                                {{ m.title }}, {{ m.year }}
+                            </a>
+                            (grade average {{ m.avg }})
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                <p>No reviews yet...</p>
+            {% endif %}
+        </section>
 
-    <section class="banner">
-        <h2>New additions</h2>
-        {% if newbies %}
-            <ul>
-                {% for n in newbies %}
-                    <li>
-                        {{ n.timestamp.date() }}: 
-                        <a href="{{ url_for('movie_details', id=n.id) }}">{{ n.title }}, {{ n.year }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No movies added...</p>
-        {% endif %}
-    </section>
+        <section class="banner">
+            <h2>New additions</h2>
+            {% if newbies %}
+                <ul>
+                    {% for n in newbies %}
+                        <li>
+                            {{ n.timestamp.date() }}: 
+                            <a href="{{ url_for('movie_details', id=n.id) }}">{{ n.title }}, {{ n.year }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No movies added...</p>
+            {% endif %}
+        </section>
+    </div>
 {% endblock content %}
