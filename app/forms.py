@@ -61,6 +61,13 @@ class SelectionForm(FlaskForm):
 class DeleteSelectionForm(SelectionForm):
     submit = SubmitField('Delete')
 
+class DisableSelectionForm(SelectionForm):
+    submit = SubmitField('Disable')
+
+
+class EnableSelectionForm(SelectionForm):
+    submit = SubmitField('Enable')
+
 
 class DeleteForm(FlaskForm):
     submit = SubmitField('Del')

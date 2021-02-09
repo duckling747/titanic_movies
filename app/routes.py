@@ -34,6 +34,8 @@ from app.forms import (
     DeleteForm,
     ReviewForm,
     DeleteSelectionForm,
+    DisableSelectionForm,
+    EnableSelectionForm,
 )
 
 from sqlalchemy.sql import func, desc
@@ -60,7 +62,8 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
+        if user is None or not user.check_password(form.password.data)\
+            or user.disabled:
             flash('invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
@@ -203,13 +206,31 @@ def admin_review_del(id):
     return redirect(url_for('admin'))
 
 
+@app.route('/admin/users/toggle_enabled_status', methods=['POST'])
+@login_required
+def admin_toggle_status_user():
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    id = request.form.get('select')
+    u = User.query.get_or_404(id)
+    u.disabled = not u.disabled
+    db.session.add(u)
+    db.session.commit()
+    return redirect(url_for('admin_user'))
+
 @app.route('/admin/users', methods=['GET', 'POST'])
 @login_required
 def admin_user():
     if not current_user.admin:
         return redirect(url_for('index'))
-    users = User.query.all()
+    users = User.query.order_by(User.username).all()
     form = AdminRegistrationForm()
+    disable_form = DisableSelectionForm(obj=User)
+    enable_form = EnableSelectionForm(obj=User)
+    disable_form.select.choices = \
+        [(u.id, u.username) for u in users if u.id != current_user.id and not u.disabled]
+    enable_form.select.choices = \
+        [(u.id, u.username) for u in users if u.id != current_user.id and u.disabled]
     if form.validate_on_submit():
         user = User(username=form.username.data, admin=form.admin.data)
         user.set_password(form.password.data)
@@ -218,7 +239,8 @@ def admin_user():
         flash('User created successfully')
         return redirect(url_for('admin_user'))
     return render_template('admin_user.j2', title='admin_user',
-        users=users, form=form)
+        users=users, form=form, disable_form=disable_form,
+        enable_form=enable_form)
 
 @app.route('/admin/movies/<id>/actors', methods=['POST'])
 @login_required
@@ -226,7 +248,7 @@ def admin_movie_add_actor(id):
     if not current_user.admin:
         return redirect(url_for('index'))
     actor = request.form['select']
-    m = Movie.query.get(id)
+    m = Movie.query.get_or_404(id)
     actor = Actor.query.get(actor)
     m.actors.append(actor)
     db.session.add(m)
@@ -239,7 +261,7 @@ def admin_movie_add_genre(id):
     if not current_user.admin:
         return redirect(url_for('index'))
     genre = request.form['select']
-    m = Movie.query.get(id)
+    m = Movie.query.get_or_404(id)
     genre = Genre.query.get(genre)
     m.genres.append(genre)
     db.session.add(m)
@@ -251,7 +273,7 @@ def admin_movie_add_genre(id):
 def admin_movie_del_actor(movie_id, actor_id):
     if not current_user.admin:
         return redirect(url_for('index'))
-    m = Movie.query.get(movie_id)
+    m = Movie.query.get_or_404(movie_id)
     m.actors = [a for a in m.actors if a.id != int(actor_id)]
     db.session.add(m)
     db.session.commit()
@@ -262,7 +284,7 @@ def admin_movie_del_actor(movie_id, actor_id):
 def admin_movie_del_genre(movie_id, genre_id):
     if not current_user.admin:
         return redirect(url_for('index'))
-    m = Movie.query.get(movie_id)
+    m = Movie.query.get_or_404(movie_id)
     m.genres = [g for g in m.genres if g.id != int(genre_id)]
     db.session.add(m)
     db.session.commit()
