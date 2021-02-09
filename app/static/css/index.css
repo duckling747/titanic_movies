@@ -96,13 +96,18 @@ footer, small {
     font-size: small;
 }
 
-h1, h2, h3, h4, h5, h6, strong, .header-font {
+h1, h2, h3, h4, h5, h6, .header-font {
     font-family: 'libre_baskerville';
     font-size: x-large;
 }
 
 h1, h2 {
     font-size: xx-large;
+}
+
+strong {
+    font-family: 'libre_baskerville';
+    font-size: large;
 }
 
 .body-font, body, a {

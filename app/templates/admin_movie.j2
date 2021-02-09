@@ -7,7 +7,7 @@
                 <tr>
                     <th>title</th>
                     <th>year</th>
-                    <th>datetime added</th>
+                    <th>date added</th>
                     <th>actors</th>
                     <th>genres</th>
                 </tr>
@@ -15,7 +15,7 @@
                 <tr>
                     <td>{{ m.title }}</td>
                     <td>{{ m.year }}</td>
-                    <td>{{ m.timestamp }}</td>
+                    <td>{{ m.timestamp.date() }}</td>
                     <td>
                     {% for a in m.actors %}
                         <div class="flex-entry adm-list">
@@ -70,26 +70,45 @@
         {% else %}
             <p>No movies yet...</p>
         {% endif %}
-        <h2>Add new:</h2>
-        <form action="" method="POST" novalidate>
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.title.label }}<br>
-                {{ form.title(size=32) }}
-                {% for e in form.title.errors %}
-                    <div style="color: red;">{{ e }}</div>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.year.label }}<br>
-                {{ form.year(size=32) }}
-                {% for e in form.year.errors %}
-                    <div style="color: red;">{{ e }}</div>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.submit() }}
-            </p>
-        </form>
     </section>
+    <div class="flex-entry">
+        <section class="adm-add">
+            <h2>Add new:</h2>
+            <form action="" method="POST" novalidate>
+                {{ add_form.hidden_tag() }}
+                <p>
+                    {{ add_form.title.label }}<br>
+                    {{ add_form.title(size=32) }}
+                    {% for e in add_form.title.errors %}
+                        <div style="color: red;">{{ e }}</div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ add_form.year.label }}<br>
+                    {{ add_form.year(size=32) }}
+                    {% for e in add_form.year.errors %}
+                        <div style="color: red;">{{ e }}</div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ add_form.submit() }}
+                </p>
+            </form>
+        </section>
+
+        <section class="adm-del">
+            <h2>Delete:</h2>
+            <form action="{{ url_for('admin_del_movie') }}" method="POST" novalidate>
+                {{ del_movie_form.hidden_tag() }}
+                <p>
+                    {{ del_movie_form.select.label }}<br>
+                    {{ del_movie_form.select }}
+                </p>
+                <p>
+                    {{ del_movie_form.submit() }}
+                </p>
+            </form>
+        </section>
+    </div>
+
 {% endblock adminstuff %}

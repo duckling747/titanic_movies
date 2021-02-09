@@ -16,15 +16,42 @@
     <hr>
 
     {% block adminstuff %}
-        <h2>Latest reviews:</h2>
+        <h2>Reviews:</h2>
         {% if reviews %}
             <div>
                 {% for r in reviews %}
                     <div class="flex-entry adm-list">
-                        <div><strong>user:</strong> {{ r.user.username }}</div>
+                        <div><strong>user:</strong> {{ r.username }}</div>
                         <div><strong>grade:</strong> {{ r.grade }}</div>
                         <div><strong>thoughts:</strong> {{ r.thoughts[0:20] }}...</div>
                         <div><strong>feelings:</strong> {{ r.feelings[0:20] }}...</div>
+                        <div>
+                            <noscript>
+                                <form action="{{ url_for('admin_review_del', id=r.id) }}" method="POST" novalidate>
+                                    {{ del_form.hidden_tag() }}
+                                    <div>
+                                        {{ del_form.submit() }}
+                                    </div>
+                                </form>
+                            </noscript>
+                            <div id="insert-{{ r.id }}"></div>
+                            <script type="text/javascript">
+                                function send() {
+                                    var yn = confirm("Are you sure you want to delete?");
+                                    if (!yn) return;
+                                    var form = document.createElement("form");
+                                    form.method = "POST";
+                                    form.action = "{{ url_for('admin_review_del', id=r.id) }}";
+                                    document.getElementById("insert-{{ r.id }}").appendChild(form);
+                                    form.submit();
+                                }
+                                var btn = document.createElement("button");
+                                btn.onclick = send;
+                                var text = document.createTextNode("del");
+                                btn.appendChild(text);
+                                document.getElementById("insert-{{ r.id }}").appendChild(btn);
+                            </script>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

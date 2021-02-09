@@ -30,9 +30,10 @@ from app.forms import (
     AdminRegistrationForm,
     ActorForm,
     GenreForm,
-    AddToMovieForm,
-    DelFromMovieForm,
+    SelectionForm,
+    DeleteForm,
     ReviewForm,
+    DeleteSelectionForm,
 )
 
 from sqlalchemy.sql import func, desc
@@ -185,8 +186,22 @@ def reviews(id):
 def admin():
     if not current_user.admin:
         return redirect(url_for('index'))
-    reviews = Review.query.order_by(Review.timestamp.desc()).limit(10).all()
-    return render_template('admin.j2', title='admin', reviews=reviews)
+    reviews = Review.query\
+        .with_entities(Review.id, Review.grade, Review.thoughts, Review.feelings, User.username)\
+        .join(User).order_by(User.username.asc()).all()
+    
+    return render_template('admin.j2', title='admin', reviews=reviews, del_form=DeleteForm())
+
+@app.route('/admin/reviews/<id>', methods=['POST'])
+@login_required
+def admin_review_del(id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    r = Review.query.get(id)
+    db.session.delete(r)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
 
 @app.route('/admin/users', methods=['GET', 'POST'])
 @login_required
@@ -258,13 +273,14 @@ def admin_movie_del_genre(movie_id, genre_id):
 def admin_movie():
     if not current_user.admin:
         return redirect(url_for('index'))
-    movies = Movie.query.all()
+    movies = Movie.query.order_by(Movie.title.asc()).all()
     form = MovieForm()
-    add_actor = AddToMovieForm(obj=Actor)
-    add_actor.select.choices = [(a.id, a.name) for a in Actor.query.order_by('name')]
-    add_genre = AddToMovieForm(obj=Genre)
-    add_genre.select.choices = [(g.id, g.name) for g in Genre.query.order_by('name')]
-    
+    add_actor = SelectionForm(obj=Actor)
+    add_actor.select.choices = [(a.id, a.name) for a in Actor.query.order_by(Actor.name.asc())]
+    add_genre = SelectionForm(obj=Genre)
+    add_genre.select.choices = [(g.id, g.name) for g in Genre.query.order_by(Genre.name.asc())]
+    delete_movie_form = DeleteSelectionForm(obj=Movie)
+    delete_movie_form.select.choices = [(m.id, f'{m.title}, {m.year}') for m in movies]
     if form.validate_on_submit():
         m = Movie(title=form.title.data, year=form.year.data)
         db.session.add(m)
@@ -272,8 +288,19 @@ def admin_movie():
         flash('Movie added to db')
         return redirect(url_for('admin_movie'))
     return render_template('admin_movie.j2', title='admin_movie',
-        movies=movies, form=form, add_actor=add_actor, add_genre=add_genre,
-        del_form = DelFromMovieForm())
+        movies=movies, add_form=form, add_actor=add_actor, add_genre=add_genre,
+        del_form=DeleteForm(), del_movie_form=delete_movie_form)
+
+@app.route('/admin/movies/delete', methods=['POST'])
+@login_required
+def admin_del_movie():
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    id = request.form.get('select')
+    m = Movie.query.get_or_404(id)
+    db.session.delete(m)
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
 
 
 @app.route('/admin/actors', methods=['GET', 'POST'])
