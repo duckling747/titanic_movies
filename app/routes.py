@@ -117,18 +117,7 @@ def movie_details(id):
 def to_date(datestr):
     return datetime.strptime(datestr, '%Y-%m-%d').date()
 
-@app.route('/movies/<id>/reviews')
-def reviews(id):
-    m = Movie.query\
-        .with_entities(Movie.title, Movie.year).filter(Movie.id == id).first_or_404()
-    page = request.args.get('page', default=1, type=int)
-    min_grade = request.args.get('mingrade', default=0, type=int)
-    max_grade = request.args.get('maxgrade', default=5, type=int)
-    min_date = request.args.get('mindate', default=to_date('1800-01-01'), type=to_date)
-    max_date = request.args.get('maxdate', default=datetime.today().date(), type=to_date)
-    sort_by = request.args.get('sortorder', default=0, type=int)
-    textcontains = request.args.get('textcontains', default='', type=str)
-    
+def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date):
     reviews = Review.query\
         .filter(Review.movie_id == id, Review.grade <= max_grade, Review.grade >= min_grade,
             Review.timestamp <= max_date, Review.timestamp >= min_date)
@@ -143,22 +132,53 @@ def reviews(id):
         reviews = reviews.order_by(Review.timestamp.desc())
     else:
         abort(404)
+    return reviews
 
-    reviews = reviews.paginate(page, 2, False)
-
+def construct_page_links(id, min_grade, max_grade, min_date, max_date, sort_by, textcontains, reviews):
     next_page = url_for('reviews', id=id, mingrade=min_grade,
         maxgrade=max_grade, mindate=min_date, maxdate=max_date,
-        sortorder=sort_by, page=reviews.next_num)\
+        sortorder=sort_by, textcontains=textcontains, page=reviews.next_num)\
     if reviews.has_next else None
+
     prev_page = url_for('reviews', id=id, mingrade=min_grade,
         maxgrade=max_grade, mindate=min_date, maxdate=max_date,
-        sortorder=sort_by, page=reviews.prev_num)\
+        sortorder=sort_by, textcontains=textcontains, page=reviews.prev_num)\
     if reviews.has_prev else None
+
+    first_page = url_for('reviews', id=id, mingrade=min_grade,
+        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
+        sortorder=sort_by, textcontains=textcontains, page=1)\
+    if reviews.pages > 1 and reviews.page != 1 else None
+
+    last_page = url_for('reviews', id=id, mingrade=min_grade,
+        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
+        sortorder=sort_by, textcontains=textcontains, page=reviews.pages)\
+    if reviews.pages > 1 and reviews.page < reviews.pages else None
+
+    return (next_page, prev_page, first_page, last_page)
+
+@app.route('/movies/<id>/reviews')
+def reviews(id):
+    m = Movie.query\
+        .with_entities(Movie.title, Movie.year).filter(Movie.id == id).first_or_404()
+    page = request.args.get('page', default=1, type=int)
+    min_grade = request.args.get('mingrade', default=0, type=int)
+    max_grade = request.args.get('maxgrade', default=5, type=int)
+    min_date = request.args.get('mindate', default=to_date('1800-01-01'), type=to_date)
+    max_date = request.args.get('maxdate', default=datetime.today().date(), type=to_date)
+    sort_by = request.args.get('sortorder', default=0, type=int)
+    textcontains = request.args.get('textcontains', default='', type=str)
+
+    reviews = construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date)\
+        .paginate(page, 2, False)
+
+    links = construct_page_links(id, min_grade, max_grade, min_date, max_date, sort_by, textcontains, reviews)
 
     return render_template('movie_reviews.j2', title='reviews',
         min_grade=min_grade, max_grade=max_grade, min_date=min_date, max_date=max_date,
         sort_by=sort_by, textcontains=textcontains, current_page=reviews.page, total_pages=reviews.pages,
-        movie=m, reviews=reviews.items, next_page=next_page, prev_page=prev_page)
+        next_page=links[0] , prev_page=links[1] , first_page=links[2], last_page=links[3],
+        movie=m, reviews=reviews.items)
 
 @app.route('/admin')
 @login_required

@@ -253,3 +253,16 @@ div#main-image>* {
 p#text-search input {
     width: 85%;
 }
+
+nav#nav-pagination-links {
+    text-align: center;
+}
+
+nav#nav-pagination-links p a#link-first-page {
+    float: left;
+}
+
+nav#nav-pagination-links p a#link-last-page {
+    float:right;
+}
+

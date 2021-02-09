@@ -77,16 +77,24 @@
         </div>
     {% endfor %}
 </ul>
-<div style="text-align: center;">
-    page: {{ current_page }} of {{ total_pages }}
-</div>
-<p style="text-align: center;">
-    {% if prev_page %}
-        <a href="{{ prev_page }}">Previous page</a>
-    {% endif %}
-    {% if next_page %}
-        <a href="{{ next_page}}">Next page</a>
-    {% endif %}
-</p>
+<nav id="nav-pagination-links">
+    <div>
+        page: {{ current_page }} of {{ total_pages }}
+    </div>
+    <p>
+        {% if first_page %}
+            <a id="link-first-page" href="{{ first_page }}">First page</a>
+        {% endif %}
+        {% if prev_page %}
+            <a href="{{ prev_page }}">Previous page</a>
+        {% endif %}
+        {% if next_page %}
+            <a href="{{ next_page}}">Next page</a>
+        {% endif %}
+        {% if last_page %}
+            <a id="link-last-page" href="{{ last_page }}">Last page</a>
+        {% endif %}
+    </p>
+</nav>
 
 {% endblock content %}
