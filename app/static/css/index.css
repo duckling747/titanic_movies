@@ -93,21 +93,21 @@ footer {
 }
 
 footer, small {
-    font-size: x-small;
+    font-size: small;
 }
 
 h1, h2, h3, h4, h5, h6, strong, .header-font {
     font-family: 'libre_baskerville';
-    font-size: large;
+    font-size: x-large;
 }
 
 h1, h2 {
-    font-size: x-large;
+    font-size: xx-large;
 }
 
 .body-font, body, a {
     font-family: 'spacemono';
-    font-size: small;
+    font-size: medium;
 }
 
 .color-link, a {
