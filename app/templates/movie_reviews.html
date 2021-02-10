@@ -1,4 +1,4 @@
-{% extends "base.j2" %}
+{% extends "base.html" %}
 {% block content %}
 
 <h2>All reviews of {{ movie.title }}, {{ movie.year }}</h2>
@@ -60,7 +60,7 @@
     {% for review in reviews %}
         <li>
             {% with review=review %}
-                {% include "_movie_review_box.j2" %}
+                {% include "_movie_review_box.html" %}
             {% endwith %}
         </li>
     {% else %}

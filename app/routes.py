@@ -54,7 +54,7 @@ def index():
         .group_by(Movie.id).order_by(desc('avg')).limit(10).all()
 
     newbies = Movie.query.order_by(Movie.timestamp.desc()).limit(10).all()
-    return render_template('index.j2', title='home',
+    return render_template('index.html', title='home',
         top_graded=top_graded, newbies=newbies)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -70,7 +70,7 @@ def login():
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         return redirect(url_for('index'))
-    return render_template('login.j2', title='login', form=form)
+    return render_template('login.html', title='login', form=form)
 
 @app.route('/logout')
 def logout():
@@ -89,12 +89,12 @@ def register():
         db.session.commit()
         flash('Registered succesfully')
         return redirect(url_for('login'))
-    return render_template('register.j2', title='register', form=form)
+    return render_template('register.html', title='register', form=form)
 
 @app.route('/browse')
 def browse():
     movies = Movie.query.order_by(Movie.title.asc()).all()
-    return render_template('browse.j2', title='browse', movies=movies)
+    return render_template('browse.html', title='browse', movies=movies)
 
 @app.route('/movies/<id>', methods=['GET', 'POST'])
 @login_required
@@ -117,7 +117,7 @@ def movie_details(id):
         db.session.commit()
         flash('Review sent succesfully')
         return redirect(url_for('movie_details', id=id))
-    return render_template('movie_details.j2', title='movie_details',
+    return render_template('movie_details.html', title='movie_details',
         movie=m, reviews=reviews, form=form)
 
 def to_date(datestr):
@@ -182,7 +182,7 @@ def reviews(id):
 
     links = construct_page_links(id, min_grade, max_grade, min_date, max_date, sort_by, textcontains, reviews)
 
-    return render_template('movie_reviews.j2', title='reviews',
+    return render_template('movie_reviews.html', title='reviews',
         min_grade=min_grade, max_grade=max_grade, min_date=min_date, max_date=max_date,
         sort_by=sort_by, textcontains=textcontains, current_page=reviews.page, total_pages=reviews.pages,
         next_page=links[0] , prev_page=links[1] , first_page=links[2], last_page=links[3],
@@ -197,7 +197,7 @@ def admin():
         .with_entities(Review.id, Review.grade, Review.thoughts, Review.feelings, User.username)\
         .join(User).order_by(User.username.asc()).all()
     
-    return render_template('admin.j2', title='admin', reviews=reviews, del_form=DeleteForm())
+    return render_template('admin.html', title='admin', reviews=reviews, del_form=DeleteForm())
 
 @app.route('/admin/reviews/<id>', methods=['POST'])
 @login_required
@@ -242,7 +242,7 @@ def admin_user():
         db.session.commit()
         flash('User created successfully')
         return redirect(url_for('admin_user'))
-    return render_template('admin_user.j2', title='admin_user',
+    return render_template('admin_user.html', title='admin_user',
         users=users, form=form, disable_form=disable_form,
         enable_form=enable_form)
 
@@ -339,7 +339,7 @@ def admin_movie():
         db.session.commit()
         flash('Movie added to db')
         return redirect(url_for('admin_movie'))
-    return render_template('admin_movie.j2', title='admin_movie',
+    return render_template('admin_movie.html', title='admin_movie',
         movies=movies, add_form=form, add_actor=add_actor, add_genre=add_genre,
         add_language=add_language,
         del_form=DeleteForm(), del_movie_form=delete_movie_form)
@@ -369,7 +369,7 @@ def admin_actor():
         db.session.commit()
         flash('Actor added to db')
         return redirect(url_for('admin_actor'))
-    return render_template('admin_movie_friend.j2', title='admin_movie_friend',
+    return render_template('admin_movie_friend.html', title='admin_movie_friend',
         collection=actors, collection_name='actors', header='Actor', form=form)
 
 @app.route('/admin/genres', methods=['GET', 'POST'])
@@ -385,7 +385,7 @@ def admin_genre():
         db.session.commit()
         flash('Genre added to db')
         return redirect(url_for('admin_genre'))
-    return render_template('admin_movie_friend.j2', title='admin_movie_friend',
+    return render_template('admin_movie_friend.html', title='admin_movie_friend',
         collection=genres, collection_name='genres', header='Genre', form=form)
 
 @app.route('/admin/languages', methods=['GET', 'POST'])
@@ -401,7 +401,7 @@ def admin_language():
         db.session.commit()
         flash('Lang added to db')
         return redirect(url_for('admin_language'))
-    return render_template('admin_movie_friend.j2', title='admin_movie_friend',
+    return render_template('admin_movie_friend.html', title='admin_movie_friend',
         collection=languages, collection_name='languages', header='Language', form=form)
 
 
