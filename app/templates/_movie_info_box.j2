@@ -1,0 +1,31 @@
+<section id="movie_info_box">
+    <h2>{{ movie.title }}, {{ movie.year }}</h2>
+    <div>
+        <strong>Genres:</strong>
+        <ul class="comma-sep-list">
+            {% for g in movie.genres %}
+                <li>{{ g.name }}</li>
+            {% else %}
+                This movie doesn't have any genres listed
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <strong>Starring:</strong>
+        <ul class="comma-sep-list">
+            {% for a in movie.actors %}
+                <li>{{ a.name }}</li>
+            {% else %}
+                This movie doesn't have any actors listed
+            {% endfor %}
+        </ul>
+    </div>
+
+{% if movie.synopsis %}
+    <div>
+        <strong>Synopsis:</strong>
+        <p>{{ movie.synopsis }}</p>
+    </div>
+{% endif %}
+</section>

@@ -16,6 +16,7 @@ from app.models import (
     Actor,
     Review,
     Genre,
+    Language,
 )
 from flask_login import (
     current_user,
@@ -36,6 +37,7 @@ from app.forms import (
     DeleteSelectionForm,
     DisableSelectionForm,
     EnableSelectionForm,
+    LanguageForm,
 )
 
 from sqlalchemy.sql import func, desc
@@ -123,6 +125,8 @@ def to_date(datestr):
 
 def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date):
     reviews = Review.query\
+        .with_entities(Review.grade, Review.feelings, Review.thoughts, Review.timestamp, User.username)\
+        .join(User)\
         .filter(Review.movie_id == id, Review.grade <= max_grade, Review.grade >= min_grade,
             func.date(Review.timestamp) <= max_date, func.date(Review.timestamp) >= min_date)
     if textcontains:
@@ -223,7 +227,7 @@ def admin_toggle_status_user():
 def admin_user():
     if not current_user.admin:
         return redirect(url_for('index'))
-    users = User.query.order_by(User.username).all()
+    users = User.query.order_by(User.username.asc()).all()
     form = AdminRegistrationForm()
     disable_form = DisableSelectionForm(obj=User)
     enable_form = EnableSelectionForm(obj=User)
@@ -268,6 +272,19 @@ def admin_movie_add_genre(id):
     db.session.commit()
     return redirect(url_for('admin_movie'))
 
+@app.route('/admin/movies/<id>/languages', methods=['POST'])
+@login_required
+def admin_movie_add_language(id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    language = request.form['select']
+    m = Movie.query.get_or_404(id)
+    language = Language.query.get(language)
+    m.languages.append(language)
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
+
 @app.route('/admin/movies/<movie_id>/actors/<actor_id>', methods=['POST'])
 @login_required
 def admin_movie_del_actor(movie_id, actor_id):
@@ -290,6 +307,17 @@ def admin_movie_del_genre(movie_id, genre_id):
     db.session.commit()
     return redirect(url_for('admin_movie'))
 
+@app.route('/admin/movies/<movie_id>/languages/<language_id>', methods=['POST'])
+@login_required
+def admin_movie_del_language(movie_id, language_id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    m = Movie.query.get_or_404(movie_id)
+    m.languages = [l for l in m.languages if l.id != int(language_id)]
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
+
 @app.route('/admin/movies', methods=['GET', 'POST'])
 @login_required
 def admin_movie():
@@ -301,6 +329,8 @@ def admin_movie():
     add_actor.select.choices = [(a.id, a.name) for a in Actor.query.order_by(Actor.name.asc())]
     add_genre = SelectionForm(obj=Genre)
     add_genre.select.choices = [(g.id, g.name) for g in Genre.query.order_by(Genre.name.asc())]
+    add_language = SelectionForm(obj=Language)
+    add_language.select.choices = [(l.id, l.name) for l in Language.query.order_by(Language.name.asc())]
     delete_movie_form = DeleteSelectionForm(obj=Movie)
     delete_movie_form.select.choices = [(m.id, f'{m.title}, {m.year}') for m in movies]
     if form.validate_on_submit():
@@ -311,6 +341,7 @@ def admin_movie():
         return redirect(url_for('admin_movie'))
     return render_template('admin_movie.j2', title='admin_movie',
         movies=movies, add_form=form, add_actor=add_actor, add_genre=add_genre,
+        add_language=add_language,
         del_form=DeleteForm(), del_movie_form=delete_movie_form)
 
 @app.route('/admin/movies/delete', methods=['POST'])
@@ -330,7 +361,7 @@ def admin_del_movie():
 def admin_actor():
     if not current_user.admin:
         return redirect(url_for('index'))
-    actors = Actor.query.all()
+    actors = Actor.query.order_by(Actor.name.asc()).all()
     form = ActorForm()
     if form.validate_on_submit():
         a = Actor(name=form.name.data)
@@ -338,15 +369,15 @@ def admin_actor():
         db.session.commit()
         flash('Actor added to db')
         return redirect(url_for('admin_actor'))
-    return render_template('admin_actor.j2', title='admin_actor',
-        actors=actors, form=form)
+    return render_template('admin_movie_friend.j2', title='admin_movie_friend',
+        collection=actors, collection_name='actors', header='Actor', form=form)
 
 @app.route('/admin/genres', methods=['GET', 'POST'])
 @login_required
 def admin_genre():
     if not current_user.admin:
         return redirect(url_for('index'))
-    genres = Genre.query.all()
+    genres = Genre.query.order_by(Genre.name.asc()).all()
     form = GenreForm()
     if form.validate_on_submit():
         g = Genre(name=form.name.data)
@@ -354,6 +385,23 @@ def admin_genre():
         db.session.commit()
         flash('Genre added to db')
         return redirect(url_for('admin_genre'))
-    return render_template('admin_genre.j2', title='admin_genre',
-        genres=genres, form=form)
+    return render_template('admin_movie_friend.j2', title='admin_movie_friend',
+        collection=genres, collection_name='genres', header='Genre', form=form)
+
+@app.route('/admin/languages', methods=['GET', 'POST'])
+@login_required
+def admin_language():
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    languages = Language.query.order_by(Language.name.asc()).all()
+    form = LanguageForm()
+    if form.validate_on_submit():
+        l = Language(name=form.name.data)
+        db.session.add(l)
+        db.session.commit()
+        flash('Lang added to db')
+        return redirect(url_for('admin_language'))
+    return render_template('admin_movie_friend.j2', title='admin_movie_friend',
+        collection=languages, collection_name='languages', header='Language', form=form)
+
 

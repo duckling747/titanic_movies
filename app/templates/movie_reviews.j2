@@ -59,17 +59,9 @@
 <ul class="flex-entry">
     {% for review in reviews %}
         <li>
-            <h4>Review by {{ review.user.username }}: {{ review.grade }}/5<br>
-                <small>{{ review.timestamp }}</small>
-            </h4>
-            <div>
-                <h5>Thoughts:</h5>
-                <p>{{ review.thoughts }}</p>
-            </div>
-            <div>
-                <h5>Feelings:</h5>
-                <p>{{ review.feelings }}</p>
-            </div>
+            {% with review=review %}
+                {% include "_movie_review_box.j2" %}
+            {% endwith %}
         </li>
     {% else %}
         <div>

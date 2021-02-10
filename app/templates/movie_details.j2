@@ -1,48 +1,17 @@
 {% extends "base.j2" %}
 {% block content %}
 
-<section id="movie_info_box">
-    <h2>{{ movie.title }}, {{ movie.year }}</h2>
-    <div>
-        <strong>Genres:</strong>
-        <ul class="comma-sep-list">
-            {% for g in movie.genres %}
-                <li>{{ g.name }}</li>
-            {% else %}
-                This movie doesn't have any genres listed
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div>
-        <strong>Starring:</strong>
-        <ul class="comma-sep-list">
-            {% for a in movie.actors %}
-                <li>{{ a.name }}</li>
-            {% else %}
-                This movie doesn't have any actors listed
-            {% endfor %}
-        </ul>
-    </div>
-</section>
+{% with movie=movie %}
+    {% include "_movie_info_box.j2" %}
+{% endwith %}
 
 <section id="movie_reviews_box">
     {% if reviews %}
         <div class="flex-entry">
             {% for r in reviews %}
-                <div class="single-review">
-                    <h4>Review by {{ r.username }}: {{ r.grade }}/5<br>
-                        <small>{{ r.timestamp }}</small>
-                    </h4>
-                    <div>
-                        <h5>Thoughts:</h5>
-                        <p>{{ r.thoughts }}</p>
-                    </div>
-                    <div>
-                        <h5>Feelings:</h5>
-                        <p>{{ r.feelings }}</p>
-                    </div>
-                </div>
+                {% with review=r %}
+                    {% include "_movie_review_box.j2" %}
+                {% endwith %}
             {% endfor %}
         </div>
         <a href="{{ url_for('reviews', id=movie.id) }}">Read all reviews</a>

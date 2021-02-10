@@ -50,6 +50,7 @@ class MovieForm(FlaskForm):
         DataRequired(),
         NumberRange(min=1500, max=datetime.today().year),
     ])
+    synopsis = StringField('Synopsis')
     submit = SubmitField('Add Movie')
 
 
@@ -60,6 +61,7 @@ class SelectionForm(FlaskForm):
 
 class DeleteSelectionForm(SelectionForm):
     submit = SubmitField('Delete')
+
 
 class DisableSelectionForm(SelectionForm):
     submit = SubmitField('Disable')
@@ -77,11 +79,6 @@ class AdminRegistrationForm(RegistrationForm):
     admin = BooleanField('Is admin', default=False)
 
 
-class ActorForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    submit = SubmitField('Add actor')
-
-
 class ReviewForm(FlaskForm):
     grade = IntegerField('Grade (within range 0-5)',
         validators=[DataRequired(), NumberRange(min=0, max=5)])
@@ -92,7 +89,18 @@ class ReviewForm(FlaskForm):
     submit = SubmitField('Send')
 
 
-class GenreForm(FlaskForm):
+class NameForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
+    
+
+class ActorForm(NameForm):
+    submit = SubmitField('Add actor')
+
+
+class GenreForm(NameForm):
     submit = SubmitField('Add genre')
+
+
+class LanguageForm(NameForm):
+    submit = SubmitField('Add language')
 

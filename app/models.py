@@ -41,16 +41,25 @@ MOVIEGENRE = db.Table('moviegenre',
 )
 
 
+MOVIELANGUAGE = db.Table('movielanguage',
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id'), primary_key=True),
+    db.Column('language_id', db.Integer, db.ForeignKey('language.id'), primary_key=True)
+)
+
+
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256), index=True)
     year = db.Column(db.Integer, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    synopsis = db.Column(db.String(256), unique=True)
     reviews = db.relationship('Review', backref='movie', lazy=True, uselist=True)
     actors = db.relationship('Actor', secondary=CAST, lazy='subquery',
         backref=db.backref('movies', lazy=True), uselist=True)
     genres = db.relationship('Genre', secondary=MOVIEGENRE, lazy='subquery',
         backref=db.backref('movies', lazy=True), uselist=True)
+    languages = db.relationship('Language', secondary=MOVIELANGUAGE, lazy='subquery',
+        backref=db.backref('languages', lazy=True), uselist=True)
 
     def __repr__(self):
         return f'Movie {self.title}, {self.year}'
@@ -75,6 +84,11 @@ class Actor(db.Model):
 
 
 class Genre(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), unique=True, index=True)
+
+
+class Language(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, index=True)
 
