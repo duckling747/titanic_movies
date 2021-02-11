@@ -121,16 +121,12 @@ strong {
     font-size: medium;
 }
 
-.color-link, a {
+.color-main, html {
+    color: black;
+}
+
+.color-secondary, .color-link, a {
     color: #b63225;
-}
-
-.color-main {
-    color: #004e7c;
-}
-
-.color-secondary {
-    color: #591b0c;
 }
 
 .color-bg-main {
@@ -139,6 +135,10 @@ strong {
 
 .color-bg-secondary {
     background-color: #5d6059;
+}
+
+::selection, ::-moz-selection {
+    background: #7c7d7c;
 }
 
 .footer_in_left {
@@ -178,7 +178,7 @@ strong {
 }
 
 dt {
-    color: #FFF;
+    color: white;
     font: bold;
     font-size: larger;
     line-height: 200%;
@@ -252,9 +252,11 @@ section#movie_reviews_box {
 div#main-image {
     width: 100%;
     height: auto;
-    background-image: url('/static/images/banner_small.jpg');
+    background-image: linear-gradient(black, black), 
+        url('/static/images/banner_small.jpg');
     background-size: cover;
     background-repeat: no-repeat;
+    background-blend-mode: saturation;
 }
 
 div#main-image>* {
