@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Edit user: {{ current_user.username }}</h1>
+
+<div class="flex-entry">
+    <section>
+        <strong>Set profile picture:</strong>
+        <div>
+            <div>
+                <img class="img-profile" src="{{ url_for('image', id=current_user.id, img=current_user.image) }}" >
+            </div>
+            <form action="{{ url_for('image', id=current_user.id, img=current_user.image) }}" method="POST" enctype="multipart/form-data">
+                {{ profile_pic_form.hidden_tag() }}
+                <p>{{ profile_pic_form.file.label }}<br>{{ profile_pic_form.file }}</p>
+                {% for e in profile_pic_form.file.errors %}
+                    <div class="errormsg">{{ e }}</div>
+                {% endfor %}
+                <p>{{ change_pw_form.submit() }}</p>
+            </form>
+        </div>
+    </section>
+
+    <section>
+        <strong>Change password:</strong><br>
+        <form action="" method="POST">
+            {{ change_pw_form.hidden_tag() }}
+            <p>{{ change_pw_form.oldpassword.label }}<br>{{ change_pw_form.oldpassword }}</p>
+            {% for e in change_pw_form.oldpassword.errors %}
+                <div class="errormsg">{{ e }}</div>
+            {% endfor %}
+            <p>{{ change_pw_form.password.label }}<br>{{ change_pw_form.password }}</p>
+            {% for e in change_pw_form.password.errors %}
+                <div class="errormsg">{{ e }}</div>
+            {% endfor %}
+            <p>{{ change_pw_form.password2.label }}<br>{{ change_pw_form.password2 }}</p>
+            {% for e in change_pw_form.password2.errors %}
+                <div class="errormsg">{{ e }}</div>
+            {% endfor %}
+            <p>{{ change_pw_form.submit() }}</p>
+        </form>
+    </section>
+</div>
+
+<section>
+    <h2>Reviews</h2>
+    {% for r in reviews %}
+        {% with review=r %}
+            {% include "_movie_review_box.html" %}
+        {% endwith %}
+    {% endfor %}
+</section>
+
+{% endblock content %}

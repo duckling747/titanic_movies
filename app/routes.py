@@ -5,6 +5,7 @@ from flask import (
     url_for,
     request,
     abort,
+    send_from_directory,
 )
 from app import (
     app,
@@ -38,11 +39,13 @@ from app.forms import (
     DisableSelectionForm,
     EnableSelectionForm,
     LanguageForm,
+    ProfileImageForm,
+    ChangePasswordForm,
 )
-
 from sqlalchemy.sql import func, desc
-
 from datetime import datetime
+import imghdr
+import os
 
 
 @app.route('/')
@@ -76,6 +79,62 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0)
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')
+
+@app.route('/profile/<id>/images/<img>', methods=['GET', 'POST'])
+@login_required
+def image(id, img):
+    user = User.query.get_or_404(id)
+    profile_pic_form = ProfileImageForm()
+    if profile_pic_form.validate_on_submit() and int(id) == current_user.id:
+        image_file = profile_pic_form.file.data
+        filename = image_file.filename
+        if filename != '':
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS'] or\
+                file_ext != validate_image(image_file.stream):
+                return 'Invalid image file', 400
+            filename = id + '.' + datetime.now().strftime('%Y%m%d%H%M%S%f')
+            user.image = filename
+            db.session.add(user)
+            db.session.commit()
+            image_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+            return redirect(url_for('profile'))
+        return '', 204
+    path = app.config['UPLOAD_PATH']
+    if img and os.path.isfile(os.path.join(path, img)):
+        return send_from_directory(path, img)
+    else:
+        return send_from_directory(app.config['IMAGES_PATH'], 'cactus.jpg')
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    reviews = Review.query\
+        .with_entities(User.username, Review.grade, Review.feelings, Review.thoughts)\
+        .filter(Review.user_id == current_user.id)\
+        .join(User)\
+        .all()
+    change_pw_form = ChangePasswordForm()
+    profile_pic_form = ProfileImageForm()
+    if change_pw_form.validate_on_submit():
+        if current_user.check_password(change_pw_form.oldpassword.data):
+            current_user.set_password(change_pw_form.password.data)
+            db.session.add(current_user)
+            db.session.commit()
+            flash('Password changed!')
+            return redirect(url_for('profile'))
+        else:
+            change_pw_form.oldpassword.errors.append('Incorrect old password')
+    return render_template('profile.html', title='profile',
+        change_pw_form=change_pw_form, profile_pic_form=profile_pic_form, reviews=reviews)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

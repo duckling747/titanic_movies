@@ -8,6 +8,10 @@ from wtforms import (
     TextAreaField,
     SelectField,
 )
+from flask_wtf.file import (
+    FileField,
+    FileRequired,
+)
 from wtforms.validators import (
     DataRequired,
     EqualTo,
@@ -103,4 +107,23 @@ class GenreForm(NameForm):
 
 class LanguageForm(NameForm):
     submit = SubmitField('Add language')
+
+
+class ProfileImageForm(FlaskForm):
+    file = FileField('Select image file', validators=[FileRequired()])
+    submit = SubmitField('Submit')
+
+
+class ChangePasswordForm(FlaskForm):
+    oldpassword = PasswordField('Old password',
+        validators=[DataRequired()]
+    )
+    password = PasswordField('New password',
+        validators=[Length(min=8), DataRequired()]
+    )
+    password2 = PasswordField('Confirm new password',
+        validators=[EqualTo('password'), DataRequired()]
+    )
+    submit = SubmitField('Submit')
+
 

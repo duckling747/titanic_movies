@@ -12,6 +12,11 @@ class Config(object):
     PASSWORD = os.environ.get('DB_PASSWORD')
     DATABASE = os.environ.get('DB_NAME')
 
+    MAX_CONTENT_LENGTH = 1024*1024 # 1 MB
+    UPLOAD_EXTENSIONS = ['.jpg', '.png', '.gif']
+    IMAGES_PATH = os.path.join(BASEDIR, 'static/images')
+    UPLOAD_PATH = os.path.join(BASEDIR, 'static/uploads')
+
     DATABASE_URL = os.environ.get('DATABASE_URL')
 
     if DATABASE_URL:

@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, default=False)
     joined = db.Column(db.DateTime, default=datetime.utcnow)
     disabled = db.Column(db.Boolean, default=False)
+    image = db.Column(db.String(128), unique=True)
     reviews = db.relationship('Review', backref='user', lazy=True, uselist=True)
 
     def __repr__(self):

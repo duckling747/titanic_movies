@@ -194,7 +194,10 @@ dd {
 
 .flex-entry {
     display: flex;
+    display: -webkit-flex;
     flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    align-items: top;
 }
 
 .flex-entry>* {
@@ -281,4 +284,9 @@ th {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
+}
+
+img.img-profile {
+    width: 250px;
+    height: 250px;
 }
