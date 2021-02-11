@@ -6,12 +6,11 @@
 {% endwith %}
 
 <section id="movie_reviews_box">
+    <h2>Reviews</h2>
     {% if reviews %}
-        <div class="flex-entry">
-            {% for r in reviews %}
-                {% with review=r %}
-                    {% include "_movie_review_box.html" %}
-                {% endwith %}
+        <div>
+            {% for review in reviews %}
+                {% include "_movie_review_box.html" %}
             {% endfor %}
         </div>
         <a href="{{ url_for('reviews', id=movie.id) }}">Read all reviews</a>
@@ -21,7 +20,7 @@
 </section>
 
 <section id="custom_review_box">
-    <h3>Write your own review:</h3>
+    <h2>Write your own review</h2>
     <form action="" method="POST">
         {{ form.hidden_tag() }}
         <p class="custom-review-component">

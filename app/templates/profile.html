@@ -43,10 +43,8 @@
 
 <section>
     <h2>Reviews</h2>
-    {% for r in reviews %}
-        {% with review=r %}
-            {% include "_movie_review_box.html" %}
-        {% endwith %}
+    {% for review in reviews %}
+        {% include "_movie_review_box.html" %}
     {% endfor %}
 </section>
 

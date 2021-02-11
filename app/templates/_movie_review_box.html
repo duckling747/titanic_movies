@@ -1,13 +1,13 @@
 <div class="single-review">
-    <h4>Review by {{ review.username }}: {{ review.grade }}/5<br>
-        <small>{{ review.timestamp }}</small>
-    </h4>
-    <div>
-        <h5>Thoughts:</h5>
-        <p>{{ review.thoughts }}</p>
+    <div class="single-review-left color-bg-secondary">
+        <div>
+            <img class="img-review-box" src="{{ url_for('image', id=review.user_id, img=review.image) }}" alt="profile picture">
+        </div>
+        <div><small>{{ review.timestamp.date() }}</small><br><strong>{{ review.username }}</strong></div>
     </div>
-    <div>
-        <h5>Feelings:</h5>
+    <div class="single-review-right">
+        <p>{{ review.thoughts }}</p>
         <p>{{ review.feelings }}</p>
+        <p>{{ review.grade }}/5</p>
     </div>
 </div>

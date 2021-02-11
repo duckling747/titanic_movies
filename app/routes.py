@@ -88,6 +88,7 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+@app.route('/profile/<id>/images', defaults={'img': ''})
 @app.route('/profile/<id>/images/<img>', methods=['GET', 'POST'])
 @login_required
 def image(id, img):
@@ -118,7 +119,8 @@ def image(id, img):
 @login_required
 def profile():
     reviews = Review.query\
-        .with_entities(User.username, Review.grade, Review.feelings, Review.thoughts)\
+        .with_entities(User.username, Review.grade, Review.feelings, Review.thoughts,
+            Review.timestamp, Review.user_id, User.image)\
         .filter(Review.user_id == current_user.id)\
         .join(User)\
         .all()
@@ -160,10 +162,11 @@ def browse():
 def movie_details(id):
     m = Movie.query.get_or_404(id)
     reviews = Review.query\
-        .join(User)\
-        .with_entities(Review.grade, Review.timestamp, Review.feelings, Review.thoughts, User.username)\
+        .with_entities(User.username, Review.grade, Review.feelings, Review.thoughts,
+            Review.timestamp, Review.user_id, User.image)\
         .filter(Review.movie_id == id)\
-        .limit(2)\
+        .join(User)\
+        .limit(4)\
         .all()
 
     form = ReviewForm()
@@ -184,7 +187,8 @@ def to_date(datestr):
 
 def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date):
     reviews = Review.query\
-        .with_entities(Review.grade, Review.feelings, Review.thoughts, Review.timestamp, User.username)\
+        .with_entities(User.username, Review.grade, Review.feelings, Review.thoughts,
+            Review.timestamp, Review.user_id, User.image)\
         .join(User)\
         .filter(Review.movie_id == id, Review.grade <= max_grade, Review.grade >= min_grade,
             func.date(Review.timestamp) <= max_date, func.date(Review.timestamp) >= min_date)
@@ -237,7 +241,7 @@ def reviews(id):
     textcontains = request.args.get('textcontains', default='', type=str)
 
     reviews = construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date)\
-        .paginate(page, 2, False)
+        .paginate(page, 4, False)
 
     links = construct_page_links(id, min_grade, max_grade, min_date, max_date, sort_by, textcontains, reviews)
 

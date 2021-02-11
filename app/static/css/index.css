@@ -134,7 +134,7 @@ strong {
 }
 
 .color-bg-secondary {
-    background-color: #5d6059;
+    background-color: #4f5358;
 }
 
 ::selection, ::-moz-selection {
@@ -244,11 +244,6 @@ section#custom_review_box textarea {
 section#movie_reviews_box {
 }
 
-.single-review {
-    padding-left: 10px;
-    margin-bottom: 20px;
-}
-
 div#main-image {
     width: 100%;
     height: auto;
@@ -297,4 +292,39 @@ th {
 img.img-profile {
     width: 250px;
     height: 250px;
+}
+
+img.img-review-box {
+    width: 80px;
+    height: 80px;
+}
+
+.single-review {
+    width: 95%;
+    background: white;
+    padding-left: 10px;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.single-review-left {
+    width: 80px;
+    color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: fit-content;
+    float: left;
+    margin: 10px 10px 10px 0;
+    padding: 5px;
+}
+
+.single-review-right {
+    padding: 15px;
+    margin: 0 auto;
+}
+
+/* clearfix hack: */
+.single-review::after {
+    content: "";
+    clear: both;
+    display: table;
 }

@@ -56,19 +56,16 @@
     <div>text contains: {{ textcontains }}</div>
 </aside>
 
-<ul class="flex-entry">
+<div>
     {% for review in reviews %}
-        <li>
-            {% with review=review %}
-                {% include "_movie_review_box.html" %}
-            {% endwith %}
-        </li>
+        {% include "_movie_review_box.html" %}
     {% else %}
+
         <div>
             No reviews!
         </div>
     {% endfor %}
-</ul>
+</div>
 <nav id="nav-pagination-links">
     <div>
         page: {{ current_page }} of {{ total_pages }}
