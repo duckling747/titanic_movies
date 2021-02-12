@@ -256,9 +256,10 @@ def admin():
         return redirect(url_for('index'))
     page = request.args.get('page', default=1, type=int)
     reviews = Review.query\
-        .with_entities(Review.id, Review.grade, Review.thoughts, Review.feelings,
-            Review.timestamp, User.username)\
-        .join(User).order_by(User.username.asc())\
+        .with_entities(Movie.title, Movie.year, Review.id, Review.grade,
+            Review.thoughts, Review.feelings, Review.timestamp, User.username)\
+        .join(Movie)\
+        .join(User).order_by(Movie.title.asc())\
         .paginate(page, 5, False)
     links = construct_page_links('admin', reviews)
     return render_template('admin.html', title='admin', current_page=reviews.page,
@@ -439,6 +440,7 @@ def admin_del_movie():
         return redirect(url_for('index'))
     id = request.form.get('select')
     m = Movie.query.get_or_404(id)
+    Review.query.filter_by(movie_id=m.id).delete()
     db.session.delete(m)
     db.session.commit()
     return redirect(url_for('admin_movie'))

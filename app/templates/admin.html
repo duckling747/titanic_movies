@@ -23,6 +23,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th class="color-bg-main">movie</th>
                         <th class="color-bg-main">user</th>
                         <th class="color-bg-main">datetime added</th>
                         <th class="color-bg-main">grade</th>
@@ -33,15 +34,12 @@
                 <tbody>
                     {% for r in reviews %}
                     <tr>
+                        <td>{{ r.title }}, {{ r.year }}</td>
                         <td>{{ r.username }}</td>
                         <td>{{ r.timestamp }}</td>
-                        <td>
-                            {{ r.grade }}
-                        </td>
+                        <td>{{ r.grade }}</td>
                         <td>{{ r.thoughts }}</td>
-                        <td>
-                            {{r.feelings}}
-                        </td>
+                        <td>{{ r.feelings }}</td>
                         <td>
                             <div>
                                 <noscript>
