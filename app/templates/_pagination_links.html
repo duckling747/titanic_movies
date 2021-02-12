@@ -1,0 +1,31 @@
+<nav id="nav-pagination-links">
+    <table class="table-pagination">
+        <tr>
+            <td class="table-pagination-left"></td>
+            <td class="table-pagination-center">
+                page: {{ current_page }} of {{ total_pages }}
+            </td>
+            <td class="table-pagination-right"></td>
+        </tr>
+        <tr>
+            <td class="table-pagination-left">
+            {% if first_page %}
+                <a id="link-first-page" href="{{ first_page }}">First page</a>
+            {% endif %}
+            </td>
+            <td class="table-pagination-center">
+            {% if prev_page %}
+                <a href="{{ prev_page }}">Previous page</a>
+            {% endif %}
+            {% if next_page %}
+                <a href="{{ next_page}}">Next page</a>
+            {% endif %}
+            </td>
+            <td class="table-pagination-right">
+            {% if last_page %}
+                <a id="link-last-page" href="{{ last_page }}">Last page</a>
+            {% endif %}
+            </td>
+        </tr>
+    </table>
+</nav>

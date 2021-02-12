@@ -9,27 +9,27 @@
         <div class="flex-entry">
             <p>
                 <label for="inputmingrade">Min grade</label>
-                <input id="inputmingrade" type="number" name="mingrade" max=5 min=0 />
+                <input id="inputmingrade" type="number" name="min_grade" max=5 min=0 />
             </p>
             <p>
                 <label for="inputmaxgrade">Max grade</label>
-                <input id="inputmaxgrade" type="number" name="maxgrade" max=5 min=0 />
+                <input id="inputmaxgrade" type="number" name="max_grade" max=5 min=0 />
             </p>
             <p>
                 <label for="inputmindate">Min date</label>
-                <input id="inputmindate" type="date" name="mindate" />
+                <input id="inputmindate" type="date" name="min_date" />
             </p>
             <p>
                 <label for="inputmaxdate">Max date</label>
-                <input id="inputmaxdate" type="date" name="maxdate" />
+                <input id="inputmaxdate" type="date" name="max_date" />
             </p>
         </div>
         <div class="flex-entry">
             <p>
                 <label for="sortorderdate">Sort by date</label>
-                <input id="sortorderdate" type="radio" name="sortorder" value=1 />
+                <input id="sortorderdate" type="radio" name="sort_by" value=1 />
                 <label for="sortordergrade">Sort by grade</label>
-                <input id="sortordergrade" type="radio" name="sortorder" value=0 />
+                <input id="sortordergrade" type="radio" name="sort_by" value=0 />
             </p>
         </div>
         <p id="text-search">
@@ -66,24 +66,6 @@
         </div>
     {% endfor %}
 </div>
-<nav id="nav-pagination-links">
-    <div>
-        page: {{ current_page }} of {{ total_pages }}
-    </div>
-    <p>
-        {% if first_page %}
-            <a id="link-first-page" href="{{ first_page }}">First page</a>
-        {% endif %}
-        {% if prev_page %}
-            <a href="{{ prev_page }}">Previous page</a>
-        {% endif %}
-        {% if next_page %}
-            <a href="{{ next_page}}">Next page</a>
-        {% endif %}
-        {% if last_page %}
-            <a id="link-last-page" href="{{ last_page }}">Last page</a>
-        {% endif %}
-    </p>
-</nav>
+{% include "_pagination_links.html" %}
 
 {% endblock content %}

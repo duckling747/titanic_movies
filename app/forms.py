@@ -127,3 +127,7 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
+class EditSynopsisForm(FlaskForm):
+    synopsis = TextAreaField('Synopsis')
+    submit = SubmitField('Save changes')
+

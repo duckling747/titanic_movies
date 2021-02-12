@@ -41,6 +41,7 @@ from app.forms import (
     LanguageForm,
     ProfileImageForm,
     ChangePasswordForm,
+    EditSynopsisForm,
 )
 from sqlalchemy.sql import func, desc
 from datetime import datetime
@@ -118,12 +119,14 @@ def image(id, img):
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
+    page = request.args.get('page', default=1, type=int)
     reviews = Review.query\
         .with_entities(User.username, Review.grade, Review.feelings, Review.thoughts,
             Review.timestamp, Review.user_id, User.image)\
         .filter(Review.user_id == current_user.id)\
         .join(User)\
-        .all()
+        .order_by(Review.timestamp.desc())\
+        .paginate(page, 4, False)
     change_pw_form = ChangePasswordForm()
     profile_pic_form = ProfileImageForm()
     if change_pw_form.validate_on_submit():
@@ -135,8 +138,11 @@ def profile():
             return redirect(url_for('profile'))
         else:
             change_pw_form.oldpassword.errors.append('Incorrect old password')
+    links = construct_page_links('profile', reviews)
     return render_template('profile.html', title='profile',
-        change_pw_form=change_pw_form, profile_pic_form=profile_pic_form, reviews=reviews)
+        current_page=reviews.page, total_pages=reviews.pages,
+        next_page=links[0], prev_page=links[1] , first_page=links[2], last_page=links[3],
+        change_pw_form=change_pw_form, profile_pic_form=profile_pic_form, reviews=reviews.items)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -168,7 +174,6 @@ def movie_details(id):
         .join(User)\
         .limit(4)\
         .all()
-
     form = ReviewForm()
     if form.validate_on_submit():
         review = Review(
@@ -196,7 +201,6 @@ def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grad
         ftextcontains = func.lower(textcontains)
         reviews = reviews.filter(func.lower(Review.feelings).contains(ftextcontains)
             | func.lower(Review.thoughts).contains(ftextcontains))
-
     if sort_by == 0:
         reviews = reviews.order_by(Review.grade.desc())
     elif sort_by == 1:
@@ -205,26 +209,18 @@ def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grad
         abort(404)
     return reviews
 
-def construct_page_links(id, min_grade, max_grade, min_date, max_date, sort_by, textcontains, reviews):
-    next_page = url_for('reviews', id=id, mingrade=min_grade,
-        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
-        sortorder=sort_by, textcontains=textcontains, page=reviews.next_num)\
-    if reviews.has_next else None
+def construct_page_links(page_name, collection, **kwargs):
+    next_page = url_for(page_name, page=collection.next_num, **kwargs)\
+    if collection.has_next else None
 
-    prev_page = url_for('reviews', id=id, mingrade=min_grade,
-        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
-        sortorder=sort_by, textcontains=textcontains, page=reviews.prev_num)\
-    if reviews.has_prev else None
+    prev_page = url_for(page_name, page=collection.prev_num, **kwargs)\
+    if collection.has_prev else None
 
-    first_page = url_for('reviews', id=id, mingrade=min_grade,
-        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
-        sortorder=sort_by, textcontains=textcontains, page=1)\
-    if reviews.pages > 1 and reviews.page != 1 else None
+    first_page = url_for(page_name, page=1, **kwargs)\
+    if collection.pages > 1 and collection.page != 1 else None
 
-    last_page = url_for('reviews', id=id, mingrade=min_grade,
-        maxgrade=max_grade, mindate=min_date, maxdate=max_date,
-        sortorder=sort_by, textcontains=textcontains, page=reviews.pages)\
-    if reviews.pages > 1 and reviews.page < reviews.pages else None
+    last_page = url_for(page_name, page=collection.pages, **kwargs)\
+    if collection.pages > 1 and collection.page < collection.pages else None
 
     return (next_page, prev_page, first_page, last_page)
 
@@ -233,17 +229,19 @@ def reviews(id):
     m = Movie.query\
         .with_entities(Movie.title, Movie.year).filter(Movie.id == id).first_or_404()
     page = request.args.get('page', default=1, type=int)
-    min_grade = request.args.get('mingrade', default=0, type=int)
-    max_grade = request.args.get('maxgrade', default=5, type=int)
-    min_date = request.args.get('mindate', default=to_date('1800-01-01'), type=to_date)
-    max_date = request.args.get('maxdate', default=datetime.today().date(), type=to_date)
-    sort_by = request.args.get('sortorder', default=0, type=int)
+    min_grade = request.args.get('min_grade', default=0, type=int)
+    max_grade = request.args.get('max_grade', default=5, type=int)
+    min_date = request.args.get('min_date', default=to_date('1800-01-01'), type=to_date)
+    max_date = request.args.get('max_date', default=datetime.today().date(), type=to_date)
+    sort_by = request.args.get('sort_by', default=0, type=int)
     textcontains = request.args.get('textcontains', default='', type=str)
 
     reviews = construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date)\
         .paginate(page, 4, False)
 
-    links = construct_page_links(id, min_grade, max_grade, min_date, max_date, sort_by, textcontains, reviews)
+    links = construct_page_links('reviews', reviews, **{ 'id': id, 'min_grade': min_grade,
+        'max_grade': max_grade, 'min_date': min_date, 'max_date': max_date,
+        'sort_by': sort_by, 'textcontains': textcontains })
 
     return render_template('movie_reviews.html', title='reviews',
         min_grade=min_grade, max_grade=max_grade, min_date=min_date, max_date=max_date,
@@ -256,11 +254,17 @@ def reviews(id):
 def admin():
     if not current_user.admin:
         return redirect(url_for('index'))
+    page = request.args.get('page', default=1, type=int)
     reviews = Review.query\
-        .with_entities(Review.id, Review.grade, Review.thoughts, Review.feelings, User.username)\
-        .join(User).order_by(User.username.asc()).all()
-    
-    return render_template('admin.html', title='admin', reviews=reviews, del_form=DeleteForm())
+        .with_entities(Review.id, Review.grade, Review.thoughts, Review.feelings,
+            Review.timestamp, User.username)\
+        .join(User).order_by(User.username.asc())\
+        .paginate(page, 5, False)
+    links = construct_page_links('admin', reviews)
+    return render_template('admin.html', title='admin', current_page=reviews.page,
+        total_pages=reviews.pages,
+        next_page=links[0] , prev_page=links[1] , first_page=links[2], last_page=links[3],
+        reviews=reviews.items, del_form=DeleteForm())
 
 @app.route('/admin/reviews/<id>', methods=['POST'])
 @login_required
@@ -386,7 +390,9 @@ def admin_movie_del_language(movie_id, language_id):
 def admin_movie():
     if not current_user.admin:
         return redirect(url_for('index'))
-    movies = Movie.query.order_by(Movie.title.asc()).all()
+    page = request.args.get('page', default=1, type=int)
+    movies = Movie.query.order_by(Movie.title.asc())\
+        .paginate(page, 4, False)
     form = MovieForm()
     add_actor = SelectionForm(obj=Actor)
     add_actor.select.choices = [(a.id, a.name) for a in Actor.query.order_by(Actor.name.asc())]
@@ -395,17 +401,36 @@ def admin_movie():
     add_language = SelectionForm(obj=Language)
     add_language.select.choices = [(l.id, l.name) for l in Language.query.order_by(Language.name.asc())]
     delete_movie_form = DeleteSelectionForm(obj=Movie)
-    delete_movie_form.select.choices = [(m.id, f'{m.title}, {m.year}') for m in movies]
+    delete_movie_form.select.choices = [(m.id, f'{m.title}, {m.year}') for m in movies.items]
     if form.validate_on_submit():
-        m = Movie(title=form.title.data, year=form.year.data)
+        m = Movie(title=form.title.data, year=form.year.data, synopsis=form.synopsis.data)
         db.session.add(m)
         db.session.commit()
         flash('Movie added to db')
         return redirect(url_for('admin_movie'))
+    links = construct_page_links('admin_movie', movies)
     return render_template('admin_movie.html', title='admin_movie',
-        movies=movies, add_form=form, add_actor=add_actor, add_genre=add_genre,
-        add_language=add_language,
+        movies=movies.items, add_form=form, add_actor=add_actor, add_genre=add_genre,
+        next_page=links[0] , prev_page=links[1] , first_page=links[2], last_page=links[3],
+        add_language=add_language, current_page=movies.page, total_pages=movies.pages,
         del_form=DeleteForm(), del_movie_form=delete_movie_form)
+
+@app.route('/admin/movies/<id>/editsynopsis', methods=['GET', 'POST'])
+@login_required
+def admin_movie_synopsis(id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    m = Movie.query.get_or_404(id)
+    form = EditSynopsisForm()
+    if form.validate_on_submit():
+        if form.synopsis.data:
+            m.synopsis = form.synopsis.data
+            db.session.commit()
+        return redirect(url_for('admin_movie'))
+    else:
+        form.synopsis.data = m.synopsis if m.synopsis else ''
+    return render_template('admin_edit_synopsis.html', title='admin_editsynopsis',
+        movie_title=m.title, movie_year=m.year, form=form)
 
 @app.route('/admin/movies/delete', methods=['POST'])
 @login_required

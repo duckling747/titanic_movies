@@ -44,4 +44,25 @@
             {% endif %}
         </section>
     </div>
+    <section class="banner">
+    {% if current_user.is_anonymous %}
+        <h2>Not yet a member?</h2>
+        <p>
+            As a member of Titanic Movies you get a fantastic opportunity to review all the movies in our
+            comprehensive movie database. You also get to request new movies that are not yet included
+            by filling the members-only request form.
+        </p>
+        <p>What are you waiting for? <a href="{{ url_for('register') }}">Click here</a> to sign up!</p>
+    {% else %}
+        <h2>Hungry and want for more?</h2>
+        <p>
+            Didn't find your favourite movie? Desperately want to review something that wasn't listed?
+            Contact us using this form to request new movies for review:
+            <form method="POST" action="">
+                <input placeholder="placeholder input" />
+            </form>
+        </p>
+    {% endif %}
+    </section>
+
 {% endblock content %}

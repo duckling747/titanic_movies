@@ -2,6 +2,7 @@
 {% block adminstuff %}
     <section>
         <h2>{{ header }} in db:</h2>
+        <div class="adm-table">
         {% if collection %}
             <table>
                 <tr>
@@ -13,6 +14,7 @@
                 </tr>
                 {% endfor %}
             </table>
+        </div>
         {% else %}
             <p>No {{ collection_name }} yet...</p>
         {% endif %}

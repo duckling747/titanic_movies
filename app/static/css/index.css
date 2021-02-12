@@ -222,7 +222,7 @@ dd {
     list-style: none;
 }
 
-td {
+.adm-table table tbody tr td {
     padding: 0 5px 0 5px;
     border: 1px dotted;
 }
@@ -231,7 +231,7 @@ section#movie_info_box {
     border-bottom: 1px solid;
 }
 
-section#custom_review_box textarea {
+textarea {
     resize: none;
     width: 95%;
     height: 85%;
@@ -260,24 +260,11 @@ div#main-image>* {
     color: white;
 }
 
-
 p#text-search input {
     width: 85%;
 }
 
-nav#nav-pagination-links {
-    text-align: center;
-}
-
-nav#nav-pagination-links p a#link-first-page {
-    float: left;
-}
-
-nav#nav-pagination-links p a#link-last-page {
-    float: right;
-}
-
-div#adm-table {
+div.adm-table {
     overflow: auto;
     width: auto;
     max-height: 70vh;
@@ -328,3 +315,27 @@ img.img-review-box {
     clear: both;
     display: table;
 }
+
+nav#nav-pagination-links {
+    text-align: center;
+}
+
+.table-pagination {
+    width: 100%;
+}
+
+.table-pagination-left {
+    text-align: left;
+    width: 30%;
+}
+
+.table-pagination-right {
+    text-align: right;
+    width: 30%;
+}
+
+.table-pagination-center {
+    width: 1px;
+}
+
+

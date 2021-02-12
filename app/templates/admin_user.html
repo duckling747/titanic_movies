@@ -2,6 +2,7 @@
 {% block adminstuff %}
     <section>
         <h2>Users in db:</h2>
+        <div class="adm-table">
         {% if users %}
             <table>
                 <tr>
@@ -19,6 +20,7 @@
                 </tr>
                 {% endfor %}
             </table>
+        </div>
         {% endif %}
     </section>
 

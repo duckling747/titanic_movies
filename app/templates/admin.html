@@ -17,52 +17,74 @@
     <hr>
 
     {% block adminstuff %}
-        <h2>Reviews:</h2>
+        <h2>Reviews in db:</h2>
         {% if reviews %}
-            <div>
-                {% for r in reviews %}
-                    <div class="flex-entry adm-list">
-                        <div><strong>user:</strong> {{ r.username }}</div>
-                        <div><strong>grade:</strong> {{ r.grade }}</div>
-                        <div><strong>thoughts:</strong> {{ r.thoughts[0:20] }}...</div>
-                        <div><strong>feelings:</strong> {{ r.feelings[0:20] }}...</div>
-                        <div>
-                            <noscript>
-                                <form action="{{ url_for('admin_review_del', id=r.id) }}" method="POST" novalidate>
-                                    {{ del_form.hidden_tag() }}
-                                    <div>
-                                        {{ del_form.submit() }}
-                                    </div>
-                                </form>
-                            </noscript>
-                            <div id="insert-{{ r.id }}"></div>
-                            <script nonce="{{ csp_nonce() }}" type="text/javascript">
-                                function send() {
-                                    var yn = confirm("Are you sure you want to delete?");
-                                    if (!yn) return;
-                                    var form = document.createElement("form");
-                                    form.method = "POST";
-                                    form.action = "{{ url_for('admin_review_del', id=r.id) }}";
-                                    var input = document.createElement("input");
-                                    input.name="csrf_token";
-                                    input.value="{{ csrf_token() }}"
-                                    form.appendChild(input);
-                                    document.getElementById("insert-{{ r.id }}").appendChild(form);
-                                    form.submit();
-                                }
-                                var btn = document.createElement("button");
-                                btn.onclick = send;
-                                var text = document.createTextNode("del");
-                                btn.appendChild(text);
-                                document.getElementById("insert-{{ r.id }}").appendChild(btn);
-                            </script>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+        <div class="adm-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="color-bg-main">user</th>
+                        <th class="color-bg-main">datetime added</th>
+                        <th class="color-bg-main">grade</th>
+                        <th class="color-bg-main">thoughts</th>
+                        <th class="color-bg-main">feelings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reviews %}
+                    <tr>
+                        <td>{{ r.username }}</td>
+                        <td>{{ r.timestamp }}</td>
+                        <td>
+                            {{ r.grade }}
+                        </td>
+                        <td>{{ r.thoughts }}</td>
+                        <td>
+                            {{r.feelings}}
+                        </td>
+                        <td>
+                            <div>
+                                <noscript>
+                                    <form action="{{ url_for('admin_review_del', id=r.id) }}" method="POST" novalidate>
+                                        {{ del_form.hidden_tag() }}
+                                        <div>
+                                            {{ del_form.submit() }}
+                                        </div>
+                                    </form>
+                                </noscript>
+                                <div id="insert-{{ r.id }}"></div>
+                                <script nonce="{{ csp_nonce() }}" type="text/javascript">
+                                    function send() {
+                                        var yn = confirm("Are you sure you want to delete?");
+                                        if (!yn) return;
+                                        var form = document.createElement("form");
+                                        form.method = "POST";
+                                        form.action = "{{ url_for('admin_review_del', id=r.id) }}";
+                                        var input = document.createElement("input");
+                                        input.name="csrf_token";
+                                        input.value="{{ csrf_token() }}"
+                                        form.appendChild(input);
+                                        document.getElementById("insert-{{ r.id }}").appendChild(form);
+                                        form.submit();
+                                    }
+                                    var btn = document.createElement("button");
+                                    btn.onclick = send;
+                                    var text = document.createTextNode("del");
+                                    btn.appendChild(text);
+                                    document.getElementById("insert-{{ r.id }}").appendChild(btn);
+                                </script>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "_pagination_links.html" %}
         {% else %}
             <p>No reviews yet...</p>
         {% endif %}
+
     {% endblock adminstuff %}
 
 {% endblock content %}

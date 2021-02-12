@@ -3,12 +3,13 @@
     <section>
         <h2>Movies in db:</h2>
         {% if movies %}
-        <div id="adm-table">
+        <div class="adm-table">
             <table>
                 <thead>
                     <tr>
                         <th class="color-bg-main">title</th>
                         <th class="color-bg-main">year</th>
+                        <th class="color-bg-main">synopsis</th>
                         <th class="color-bg-main">date added</th>
                         <th class="color-bg-main">actors</th>
                         <th class="color-bg-main">genres</th>
@@ -20,6 +21,12 @@
                     <tr>
                         <td>{{ m.title }}</td>
                         <td>{{ m.year }}</td>
+                        <td>
+                            {% if m.synopsis %}
+                                <div>{{ m.synopsis[0:40] }}...</div>
+                            {% endif %}
+                            <a href="{{ url_for('admin_movie_synopsis', id=m.id) }}">Edit</a>
+                        </td>
                         <td>{{ m.timestamp.date() }}</td>
                         <td>
                         {% for a in m.actors %}
@@ -100,6 +107,7 @@
                 </tbody>
             </table>
         </div>
+        {% include "_pagination_links.html" %}
         {% else %}
             <p>No movies yet...</p>
         {% endif %}
