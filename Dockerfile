@@ -21,5 +21,5 @@ RUN apk add --no-cache --virtual .build-deps \
     && rm -rf /var/lib/apk 
 USER app
 ENV FLASK_APP="titanic_movies.py"
-ENV FLASK_ENV="development"
+ENV FLASK_ENV="production"
 ENTRYPOINT ["./startapp.sh"]

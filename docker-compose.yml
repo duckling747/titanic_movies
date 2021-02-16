@@ -12,6 +12,7 @@ services:
       - DB_USER=kayttaja
       - DB_PASSWORD=salasana
       - DB_NAME=titanix-dev
+      - FLASK_ENV=development
     volumes:
       - ./:/app
     depends_on:
