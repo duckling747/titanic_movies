@@ -370,4 +370,6 @@ nav#nav-pagination-links {
     width: 1px;
 }
 
-
+.review-user-info {
+    overflow-wrap: break-word;
+}

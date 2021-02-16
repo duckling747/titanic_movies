@@ -39,7 +39,7 @@ from app.query_utils import construct_page_links
 
 @bp.before_request
 def before_request():
-    if not current_user.admin:
+    if current_user.is_anonymous or not current_user.admin:
         return render_template('403.html'), 403
 
 @bp.route('/')
