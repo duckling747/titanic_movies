@@ -40,4 +40,9 @@ talisman = Talisman(
 login = LoginManager(app)
 login.login_view = 'login'
 
+from app.error import bp as error_bp
+from app.admin import bp as admin_bp
+app.register_blueprint(error_bp)
+app.register_blueprint(admin_bp, url_prefix='/admin')
+
 from app import routes, models

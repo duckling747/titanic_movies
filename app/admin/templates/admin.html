@@ -6,12 +6,12 @@
 
     <h2>Admin navigation:</h2>
     <nav>
-        <a href="{{ url_for('admin') }}">Admin root</a>
-        <a href="{{ url_for('admin_movie') }}">Movies</a>
-        <a href="{{ url_for('admin_user') }}">Users</a>
-        <a href="{{ url_for('admin_actor') }}">Actors</a>
-        <a href="{{ url_for('admin_genre') }}">Genres</a>
-        <a href="{{ url_for('admin_language') }}">Languages</a>
+        <a href="{{ url_for('admin.index') }}">Admin root</a>
+        <a href="{{ url_for('admin.movie') }}">Movies</a>
+        <a href="{{ url_for('admin.user') }}">Users</a>
+        <a href="{{ url_for('admin.actor') }}">Actors</a>
+        <a href="{{ url_for('admin.genre') }}">Genres</a>
+        <a href="{{ url_for('admin.language') }}">Languages</a>
     </nav>
 
     <hr>
@@ -43,7 +43,7 @@
                         <td>
                             <div>
                                 <noscript>
-                                    <form action="{{ url_for('admin_review_del', id=r.id) }}" method="POST" novalidate>
+                                    <form action="{{ url_for('admin.review_del', id=r.id) }}" method="POST" novalidate>
                                         {{ del_form.hidden_tag() }}
                                         <div>
                                             {{ del_form.submit() }}
@@ -57,7 +57,7 @@
                                         if (!yn) return;
                                         var form = document.createElement("form");
                                         form.method = "POST";
-                                        form.action = "{{ url_for('admin_review_del', id=r.id) }}";
+                                        form.action = "{{ url_for('admin.review_del', id=r.id) }}";
                                         var input = document.createElement("input");
                                         input.name="csrf_token";
                                         input.value="{{ csrf_token() }}"

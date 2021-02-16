@@ -27,21 +27,25 @@
                             {% if m.synopsis %}
                                 <div>{{ m.synopsis[0:40] }}...</div>
                             {% endif %}
-                            <a href="{{ url_for('admin_movie_synopsis', id=m.id) }}">Edit</a>
+                            <a href="{{ url_for('admin.movie_synopsis', id=m.id) }}">Edit</a>
                         </td>
                         <td>{{ m.timestamp.date() }}</td>
                         <td>
                             {% if m.trailer_url %}
                                 <div>{{ m.trailer_url }}</div>
                             {% endif %}
-                            <a href="{{ url_for('admin_movie_trailer', id=m.id) }}">Edit</a>
+                            <a href="{{ url_for('admin.movie_trailer', id=m.id) }}">Edit</a>
                         </td>
                         <td>
                             <div class="flex-entry adm-list">
-                                <div>{{ m.director }}</div>
+                                {% if m.director %}
+                                    <div>{{ m.director.name }}</div>
+                                {% else %}
+                                    <div>{{ m.director }}</div>
+                                {% endif %}
                             </div>
                             <div class="flex-entry adm-list">
-                                <form action="{{ url_for('admin_movie_set_director', id=m.id) }}" method="POST" novalidate>
+                                <form action="{{ url_for('admin.movie_set_director', id=m.id) }}" method="POST" novalidate>
                                     {{ sel_director_form.hidden_tag() }}
                                     <div>
                                         {{ sel_director_form.select }} {{ sel_director_form.submit() }}
@@ -53,7 +57,7 @@
                         {% for a in m.actors %}
                             <div class="flex-entry adm-list">
                                 <div>{{ a.name }}</div>
-                                <form action="{{ url_for('admin_movie_del_actor', movie_id=m.id, actor_id=a.id) }}"
+                                <form action="{{ url_for('admin.movie_del_actor', movie_id=m.id, actor_id=a.id) }}"
                                     method="POST" novalidate>
                                     {{ del_form.hidden_tag() }}
                                     <div>{{ del_form.submit() }}</div>
@@ -65,7 +69,7 @@
                             </div>
                         {% endfor %}
                             <div class="flex-entry adm-list">
-                                <form action="{{ url_for('admin_movie_add_actor', id=m.id) }}" method="POST" novalidate>
+                                <form action="{{ url_for('admin.movie_add_actor', id=m.id) }}" method="POST" novalidate>
                                     {{ add_actor.hidden_tag() }}
                                     <div>
                                         {{ add_actor.select() }} {{ add_actor.submit() }}
@@ -77,7 +81,7 @@
                         {% for g in m.genres %}
                             <div class="flex-entry adm-list">
                                 <div>{{ g.name }}</div>
-                                <form action="{{ url_for('admin_movie_del_genre', movie_id=m.id, genre_id=g.id) }}"
+                                <form action="{{ url_for('admin.movie_del_genre', movie_id=m.id, genre_id=g.id) }}"
                                     method="POST" novalidate>
                                     {{ del_form.hidden_tag() }}
                                     <div>{{ del_form.submit() }}</div>
@@ -89,7 +93,7 @@
                             </div>
                         {% endfor %}
                             <div class="flex-entry adm-list">
-                                <form action="{{ url_for('admin_movie_add_genre', id=m.id) }}"
+                                <form action="{{ url_for('admin.movie_add_genre', id=m.id) }}"
                                     method="POST" novalidate>
                                     {{ add_genre.hidden_tag() }}
                                     <div>
@@ -102,7 +106,7 @@
                         {% for l in m.languages %}
                             <div class="flex-entry adm-list">
                                 <div>{{ l.name }}</div>
-                                <form action="{{ url_for('admin_movie_del_language', movie_id=m.id, language_id=l.id) }}"
+                                <form action="{{ url_for('admin.movie_del_language', movie_id=m.id, language_id=l.id) }}"
                                     method="POST" novalidate>
                                     {{ del_form.hidden_tag() }}
                                     <div>{{ del_form.submit() }}</div>
@@ -114,7 +118,7 @@
                             </div>
                         {% endfor %}
                             <div class="flex-entry adm-list">
-                                <form action="{{ url_for('admin_movie_add_language', id=m.id) }}"
+                                <form action="{{ url_for('admin.movie_add_language', id=m.id) }}"
                                     method="POST" novalidate>
                                     {{ add_language.hidden_tag() }}
                                     <div>
@@ -164,7 +168,7 @@
 
         <section class="adm-del">
             <h2>Delete:</h2>
-            <form action="{{ url_for('admin_del_movie') }}" method="POST" novalidate>
+            <form action="{{ url_for('admin.del_movie') }}" method="POST" novalidate>
                 {{ del_movie_form.hidden_tag() }}
                 <p>
                     {{ del_movie_form.select.label }}<br>
