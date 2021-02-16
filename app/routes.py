@@ -41,7 +41,8 @@ from app.forms import (
     LanguageForm,
     ProfileImageForm,
     ChangePasswordForm,
-    EditSynopsisForm,
+    EditForm,
+    SelectSelectionForm,
 )
 from sqlalchemy.sql import func, desc
 from datetime import datetime
@@ -122,9 +123,10 @@ def profile():
     page = request.args.get('page', default=1, type=int)
     reviews = Review.query\
         .with_entities(User.username, Review.grade, Review.feelings, Review.thoughts,
-            Review.timestamp, Review.user_id, User.image)\
+            Review.timestamp, Review.user_id, Review.movie_id, User.image, Movie.title, Movie.year)\
         .filter(Review.user_id == current_user.id)\
         .join(User)\
+        .join(Movie)\
         .order_by(Review.timestamp.desc())\
         .paginate(page, 4, False)
     change_pw_form = ChangePasswordForm()
@@ -392,7 +394,11 @@ def admin_movie():
     if not current_user.admin:
         return redirect(url_for('index'))
     page = request.args.get('page', default=1, type=int)
-    movies = Movie.query.order_by(Movie.title.asc())\
+    movies = Movie.query\
+        .with_entities(Movie.id, Movie.title, Movie.year, Movie.synopsis, Movie.timestamp,
+            Movie.trailer_url, Actor.name.label('director'))\
+        .outerjoin(Actor, Actor.id==Movie.director_id)\
+        .order_by(Movie.title.asc())\
         .paginate(page, 4, False)
     form = MovieForm()
     add_actor = SelectionForm(obj=Actor)
@@ -403,6 +409,8 @@ def admin_movie():
     add_language.select.choices = [(l.id, l.name) for l in Language.query.order_by(Language.name.asc())]
     delete_movie_form = DeleteSelectionForm(obj=Movie)
     delete_movie_form.select.choices = [(m.id, f'{m.title}, {m.year}') for m in movies.items]
+    select_director_form = SelectSelectionForm(obj=Actor)
+    select_director_form.select.choices = add_actor.select.choices
     if form.validate_on_submit():
         m = Movie(title=form.title.data, year=form.year.data, synopsis=form.synopsis.data)
         db.session.add(m)
@@ -414,7 +422,18 @@ def admin_movie():
         movies=movies.items, add_form=form, add_actor=add_actor, add_genre=add_genre,
         next_page=links[0] , prev_page=links[1] , first_page=links[2], last_page=links[3],
         add_language=add_language, current_page=movies.page, total_pages=movies.pages,
-        del_form=DeleteForm(), del_movie_form=delete_movie_form)
+        del_form=DeleteForm(), del_movie_form=delete_movie_form, sel_director_form=select_director_form)
+
+@app.route('/admin/movies/<id>/set_director', methods=['POST'])
+@login_required
+def admin_movie_set_director(id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    m = Movie.query.get_or_404(id)
+    director = request.form['select']
+    m.director_id = director
+    db.session.commit()
+    return redirect(url_for('admin_movie'))
 
 @app.route('/admin/movies/<id>/editsynopsis', methods=['GET', 'POST'])
 @login_required
@@ -422,16 +441,33 @@ def admin_movie_synopsis(id):
     if not current_user.admin:
         return redirect(url_for('index'))
     m = Movie.query.get_or_404(id)
-    form = EditSynopsisForm()
+    form = EditForm()
     if form.validate_on_submit():
-        if form.synopsis.data:
-            m.synopsis = form.synopsis.data
+        if form.editable.data:
+            m.synopsis = form.editable.data
             db.session.commit()
         return redirect(url_for('admin_movie'))
     else:
-        form.synopsis.data = m.synopsis if m.synopsis else ''
-    return render_template('admin_edit_synopsis.html', title='admin_editsynopsis',
-        movie_title=m.title, movie_year=m.year, form=form)
+        form.editable.data = m.synopsis if m.synopsis else ''
+    return render_template('admin_edit.html', title='admin_edit',
+        movie_title=m.title, movie_year=m.year, form=form, editable_name='synopsis')
+
+@app.route('/admin/movies/<id>/set_trailer', methods=['GET', 'POST'])
+@login_required
+def admin_movie_trailer(id):
+    if not current_user.admin:
+        return redirect(url_for('index'))
+    m = Movie.query.get_or_404(id)
+    form = EditForm()
+    if form.validate_on_submit():
+        if form.editable.data:
+            m.trailer_url = form.editable.data
+            db.session.commit()
+        return redirect(url_for('admin_movie'))
+    else:
+        form.editable.data = m.trailer_url if m.trailer_url else ''
+    return render_template('admin_edit.html', title='admin_edit',
+        movie_title=m.title, movie_year=m.year, form=form, editable_name='trailer\'s url')
 
 @app.route('/admin/movies/delete', methods=['POST'])
 @login_required

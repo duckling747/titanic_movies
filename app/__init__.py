@@ -14,11 +14,22 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 csrf = CSRFProtect(app)
 csp = {
-    'object-src': '\'none\'',
-    'default-src': '\'self\' data:',
-    'font-src': '\'self\'',
-    'script-src': '\'unsafe-inline\' https: \'self\'',
-    'base-uri': '\'none\'',
+    'object-src': ['\'none\''],
+    'default-src': [
+        '\'self\'',
+        'data:'
+    ],
+    'font-src': ['\'self\''],
+    'script-src': [
+        '\'unsafe-inline\'',
+        'https:',
+        '\'self\'',
+    ],
+    'base-uri': ['\'none\''],
+    'child-src': [
+        'https://youtube.com',
+        'https://www.youtube.com',
+    ],
 }
 talisman = Talisman(
     app,

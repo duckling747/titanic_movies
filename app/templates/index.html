@@ -2,15 +2,20 @@
 
 {% block content %}
 
-    <section id="welcome_banner" class="banner">
-        <div id="main-image">
-            <h2>Welcome to Titanic Movies!</h2>
-            <div>Your go to place for the best and most coherent reviews of movies all kinds.</div>
+    <section class="banner">
+        <div>
+            <h2>
+                Welcome to Titanic Movies!
+                <br>
+                <small>
+                    Your go to place for the best and most coherent reviews of movies all kinds.
+                </small>
+            </h2>
         </div>
     </section>
 
     <div class="flex-entry">
-        <section class="banner">
+        <section>
             <h2>Top graded</h2>
             {% if top_graded %}
                 <ol>
@@ -28,7 +33,7 @@
             {% endif %}
         </section>
 
-        <section class="banner">
+        <section>
             <h2>New additions</h2>
             {% if newbies %}
                 <ul>
@@ -44,7 +49,7 @@
             {% endif %}
         </section>
     </div>
-    <section class="banner">
+    <section>
     {% if current_user.is_anonymous %}
         <h2>Not yet a member?</h2>
         <p>

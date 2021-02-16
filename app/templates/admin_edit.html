@@ -1,13 +1,13 @@
 {% extends "admin.html" %}
 {% block adminstuff %}
     <section>
-        <h2>Edit synopsis for {{ movie_title }}, {{ movie_year }}:</h2>
+        <h2>Edit {{ editable_name }} for <i>{{ movie_title }}, {{ movie_year }}</i>:</h2>
         <form action="" method="POST" novalidate>
             {{ form.hidden_tag() }}
             <p>
-                {{ form.synopsis.label }}<br>
-                {{ form.synopsis(cols=40, rows=8) }}
-                {% for e in form.synopsis.errors %}
+                {{ form.editable.label }}<br>
+                {{ form.editable(cols=40, rows=8) }}
+                {% for e in form.editable.errors %}
                     <div style="color: red;">{{ e }}</div>
                 {% endfor %}
             </p>

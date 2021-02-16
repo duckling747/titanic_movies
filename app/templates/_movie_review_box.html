@@ -6,8 +6,11 @@
         <div><small>{{ review.timestamp.date() }}</small><br><strong>{{ review.username }}</strong></div>
     </div>
     <div class="single-review-right">
-        <p>{{ review.thoughts }}</p>
-        <p>{{ review.feelings }}</p>
-        <p>{{ review.grade }}/5</p>
+        {% if review.title and review.year %}
+            <strong>For the movie <a href="{{ url_for('movie_details', id=review.movie_id) }}"><i>{{ review.title }}, {{ review.year }}</i></a></strong>
+        {% endif %}
+        <p><b>Thought: </b>{{ review.thoughts }}</p>
+        <p><b>Felt: </b>{{ review.feelings }}</p>
+        <p><b>Graded: </b>{{ review.grade }}/5</p>
     </div>
 </div>

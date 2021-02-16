@@ -54,6 +54,8 @@ class Movie(db.Model):
     year = db.Column(db.Integer, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     synopsis = db.Column(db.String(256), unique=True)
+    trailer_url = db.Column(db.String(128), unique=True)
+    director_id = db.Column(db.Integer, db.ForeignKey('actor.id'), nullable=True)
     reviews = db.relationship('Review', backref='movie', lazy=True, uselist=True)
     actors = db.relationship('Actor', secondary=CAST, lazy='subquery',
         backref=db.backref('movies', lazy=True), uselist=True)
@@ -81,6 +83,7 @@ class Review(db.Model):
 
 class Actor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    directions = db.relationship('Movie', backref='director', lazy=True, uselist=True)
     name = db.Column(db.String(128), unique=True, index=True)
 
 

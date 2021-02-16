@@ -1,31 +1,49 @@
-<section id="movie_info_box">
-    <h2>{{ movie.title }}, {{ movie.year }}</h2>
-    <div>
-        <strong>Genres:</strong>
-        <ul class="comma-sep-list">
-            {% for g in movie.genres %}
-                <li>{{ g.name }}</li>
-            {% else %}
-                This movie doesn't have any genres listed
-            {% endfor %}
-        </ul>
+<section class="banner">
+    <h2>
+        {{ movie.title }}, {{ movie.year }}
+        {% if movie.genres or movie.actors or movie.languages or movie.synopsis %}
+        <br>
+        <small>
+            <p>
+            <table class="movie-info-table">
+                <tr>
+                    {% if movie.genres %}
+                    <td>
+                        <ul class="comma-sep-list">
+                        {% for g in movie.genres %}<li>{{ g.name }}</li>{% endfor %}
+                        </ul>
+                    </td>
+                    {% endif %}
+                    {% if movie.actors %}
+                    <td>
+                        <ul class="comma-sep-list">
+                        {% for a in movie.actors %}<li>{{ a.name }}</li>{% endfor %}
+                        </ul>
+                    </td>
+                    {% endif %}
+                    {% if movie.languages %}
+                    <td>
+                        <ul class="comma-sep-list">
+                        {% for l in movie.languages %}<li>{{ l.name }}</li>{% endfor %}
+                        </ul>
+                    </td>
+                    {% endif %}
+                </tr>
+            </table>
+            </p>
+            {% if movie.synopsis %}
+                <p>{{ movie.synopsis }}</p>
+            {% endif %}
+            {% if movie.director %}
+                <p><b>director: </b>{{ movie.director.name }}</p>
+            {% endif %}
+        </small>
+        {% endif %}
+    </h2>
+    {% if movie.trailer_url %}
+    <div class="movie-trailer-extra">
+        <iframe src="{{ movie.trailer_url }}" alt="trailer">
+        </iframe>
     </div>
-
-    <div>
-        <strong>Starring:</strong>
-        <ul class="comma-sep-list">
-            {% for a in movie.actors %}
-                <li>{{ a.name }}</li>
-            {% else %}
-                This movie doesn't have any actors listed
-            {% endfor %}
-        </ul>
-    </div>
-
-{% if movie.synopsis %}
-    <div>
-        <strong>Synopsis:</strong>
-        <p>{{ movie.synopsis }}</p>
-    </div>
-{% endif %}
+    {% endif %}
 </section>

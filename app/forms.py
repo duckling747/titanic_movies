@@ -63,6 +63,10 @@ class SelectionForm(FlaskForm):
     submit = SubmitField('Add')
 
 
+class SelectSelectionForm(SelectionForm):
+    submit = SubmitField('Select')
+
+
 class DeleteSelectionForm(SelectionForm):
     submit = SubmitField('Delete')
 
@@ -110,7 +114,7 @@ class LanguageForm(NameForm):
 
 
 class ProfileImageForm(FlaskForm):
-    file = FileField('Select image file', validators=[FileRequired()])
+    file = FileField('Select image file (maximum size 1MB)', validators=[FileRequired()])
     submit = SubmitField('Submit')
 
 
@@ -127,7 +131,7 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class EditSynopsisForm(FlaskForm):
-    synopsis = TextAreaField('Synopsis')
+class EditForm(FlaskForm):
+    editable = TextAreaField('Edit')
     submit = SubmitField('Save changes')
 

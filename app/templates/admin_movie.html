@@ -11,6 +11,8 @@
                         <th class="color-bg-main">year</th>
                         <th class="color-bg-main">synopsis</th>
                         <th class="color-bg-main">date added</th>
+                        <th class="color-bg-main">trailer</th>
+                        <th class="color-bg-main">director</th>
                         <th class="color-bg-main">actors</th>
                         <th class="color-bg-main">genres</th>
                         <th class="color-bg-main">languages</th>
@@ -28,6 +30,25 @@
                             <a href="{{ url_for('admin_movie_synopsis', id=m.id) }}">Edit</a>
                         </td>
                         <td>{{ m.timestamp.date() }}</td>
+                        <td>
+                            {% if m.trailer_url %}
+                                <div>{{ m.trailer_url }}</div>
+                            {% endif %}
+                            <a href="{{ url_for('admin_movie_trailer', id=m.id) }}">Edit</a>
+                        </td>
+                        <td>
+                            <div class="flex-entry adm-list">
+                                <div>{{ m.director }}</div>
+                            </div>
+                            <div class="flex-entry adm-list">
+                                <form action="{{ url_for('admin_movie_set_director', id=m.id) }}" method="POST" novalidate>
+                                    {{ sel_director_form.hidden_tag() }}
+                                    <div>
+                                        {{ sel_director_form.select }} {{ sel_director_form.submit() }}
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
                         <td>
                         {% for a in m.actors %}
                             <div class="flex-entry adm-list">
