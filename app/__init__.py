@@ -4,6 +4,8 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_talisman import Talisman
 from flask_wtf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from .config import Config
 
@@ -35,6 +37,12 @@ talisman = Talisman(
     app,
     content_security_policy=csp,
     content_security_policy_nonce_in=['script-src'],
+)
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["2 per second"],
 )
 
 login = LoginManager(app)

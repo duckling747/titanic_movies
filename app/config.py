@@ -17,6 +17,8 @@ class Config(object):
     IMAGES_PATH = os.path.join(BASEDIR, 'static/images')
     UPLOAD_PATH = os.path.join(BASEDIR, 'static/uploads')
 
+    SESSION_COOKIE_SAMESITE = 'Strict'
+
     DATABASE_URL = os.environ.get('DATABASE_URL')
 
     if DATABASE_URL:

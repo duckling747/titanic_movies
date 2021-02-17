@@ -373,3 +373,11 @@ nav#nav-pagination-links {
 .review-user-info {
     overflow-wrap: break-word;
 }
+
+.buster {
+    opacity: 0;
+    height: 0;
+    width: 0;
+    z-index: -1;
+    float: right;
+}

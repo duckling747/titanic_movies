@@ -4,10 +4,14 @@
     <h1>Register</h1>
     <form action="" method="POST">
         {{ form.hidden_tag() }}
+        {{ form.email }}
         <p>
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}<br>
             {% for e in form.username.errors %}
+                <div class="errormsg">{{ e }}</div>
+            {% endfor %}
+            {% for e in form.email.errors %}
                 <div class="errormsg">{{ e }}</div>
             {% endfor %}
         </p>

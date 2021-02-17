@@ -8,6 +8,7 @@ from wtforms import (
     TextAreaField,
     SelectField,
 )
+from wtforms.fields.html5 import EmailField
 from flask_wtf.file import (
     FileField,
     FileRequired,
@@ -32,6 +33,7 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
+    email = EmailField('Email', render_kw={'autocomplete': 'off', 'class': 'buster'})
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[
         DataRequired(),
@@ -46,6 +48,10 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Username already in use')
+
+    def validate_email(self, email):
+        if email.data != '':
+            raise ValidationError('Faulty credentials')
 
 
 class MovieForm(FlaskForm):
