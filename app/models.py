@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
     disabled = db.Column(db.Boolean, default=False)
     image = db.Column(db.String(128), unique=True)
     reviews = db.relationship('Review', backref='user', lazy=True, uselist=True)
+    requests = db.relationship('MovieRequest', backref='user', lazy=True, uselist=True)
 
     def __repr__(self):
         return f'User {self.username}'
@@ -95,6 +96,15 @@ class Genre(db.Model):
 class Language(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, index=True)
+
+
+class MovieRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    year = db.Column(db.Integer)
+    other_info = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
 
 
 @login.user_loader

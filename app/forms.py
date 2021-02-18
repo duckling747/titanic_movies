@@ -19,6 +19,7 @@ from wtforms.validators import (
     ValidationError,
     NumberRange,
     Length,
+    Optional,
 )
 
 from app.models import User
@@ -34,7 +35,7 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     email = EmailField('Email', render_kw={'autocomplete': 'off', 'class': 'buster'})
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired(), Length(max=127)])
     password = PasswordField('Password', validators=[
         DataRequired(),
         Length(min=8),
@@ -55,12 +56,12 @@ class RegistrationForm(FlaskForm):
 
 
 class MovieForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired(), Length(max=255)])
     year = IntegerField('Year', validators=[
         DataRequired(),
         NumberRange(min=1500, max=datetime.today().year),
     ])
-    synopsis = StringField('Synopsis')
+    synopsis = StringField('Synopsis', validators=[Length(max=255), Optional()])
     submit = SubmitField('Add Movie')
 
 
@@ -141,3 +142,11 @@ class EditForm(FlaskForm):
     editable = TextAreaField('Edit')
     submit = SubmitField('Save changes')
 
+
+class RequestForm(FlaskForm):
+    name = StringField('Movie name', validators=[DataRequired(), Length(min=2, max=127)])
+    year = IntegerField('Movie release year (optional)',
+        validators=[NumberRange(min=1500, max=datetime.today().year), Optional()])
+    other_info = TextAreaField('Other relevant information (optional)',
+        validators=[Optional()])
+    submit = SubmitField('Send')

@@ -64,7 +64,20 @@
             Didn't find your favourite movie? Desperately want to review something that wasn't listed?
             Contact us using this form to request new movies for review:
             <form method="POST" action="">
-                <input placeholder="placeholder input" />
+                {{ form.hidden_tag() }}
+                <p>{{ form.name.label }}<br>{{ form.name }}</p>
+                {% for e in form.name.errors %}
+                    <div class="errormsg">{{ e }}</div>
+                {% endfor %}
+                <p>{{ form.year.label }}<br>{{ form.year }}</p>
+                {% for e in form.year.errors %}
+                    <div class="errormsg">{{ e }}</div>
+                {% endfor %}
+                <p>{{ form.other_info.label }}<br>{{ form.other_info(cols=40, rows=8) }}</p>
+                {% for e in form.other_info.errors %}
+                    <div class="errormsg">{{ e }}</div>
+                {% endfor %}
+                <p>{{ form.submit }}</p>
             </form>
         </p>
     {% endif %}

@@ -34,13 +34,11 @@
             type="font/woff" crossorigin="anonymous">
         <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/spacemono-regular-webfont.woff') }}"
             type="font/woff" crossorigin="anonymous">
-        
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='css/index.css') }}">
+
+        <link rel="stylesheet preload prefetch" as="style" href="{{ url_for('static', filename='css/index.css') }}"
+            type="text/css" crossorigin="anonymous">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 
 
     </head>

@@ -20,6 +20,7 @@ from app.models import (
     Review,
     Genre,
     Language,
+    MovieRequest,
 )
 from app.forms import (
     MovieForm,
@@ -283,3 +284,21 @@ def language():
     return render_template('admin_movie_friend.html', title='admin.movie_friend',
         collection=languages, collection_name='languages', header='Language', form=form)
 
+@bp.route('/movie_requests', methods=['GET', 'POST'])
+@login_required
+def movie_requests():
+    reqs = MovieRequest.query.order_by(MovieRequest.timestamp.asc()).all()
+    if request.method == 'POST':
+        if request.form.get('all'):
+            reqs = MovieRequest.query.all()
+        elif request.form.get('some'):
+            delete_us = request.form.getlist('deletable')
+            reqs = MovieRequest.query.filter(MovieRequest.id.in_(delete_us)).all()
+        else:
+            return abort(500)
+        for r in reqs: db.session.delete(r)
+        db.session.commit()
+        flash('Deleted successfully')
+        return redirect(url_for('admin.movie_requests'))
+    return render_template('admin_movie_requests.html', title='admin.movie_requests',
+        reqs=reqs)

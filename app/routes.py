@@ -25,6 +25,7 @@ from app.models import (
     User,
     Movie,
     Review,
+    MovieRequest,
 )
 from app.forms import (
     LoginForm,
@@ -32,6 +33,7 @@ from app.forms import (
     ReviewForm,
     ProfileImageForm,
     ChangePasswordForm,
+    RequestForm,
 )
 from app.query_utils import construct_page_links
 from datetime import datetime
@@ -39,17 +41,25 @@ import imghdr
 import os
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     top_graded = Movie.query.join(Review)\
         .with_entities(Movie.title, Movie.year, Movie.id, func.round(func.avg(Review.grade), 2)\
         .label('avg'))\
         .group_by(Movie.id).order_by(desc('avg')).limit(10).all()
-
     newbies = Movie.query.order_by(Movie.timestamp.desc()).limit(10).all()
+    form = RequestForm()
+    if form.validate_on_submit() and current_user.is_authenticated:
+        movreq = MovieRequest(user_id=current_user.id,
+            name=form.name.data, year=form.year.data,
+            other_info=form.other_info.data)
+        db.session.add(movreq)
+        db.session.commit()
+        flash('Request sent!')
+        return redirect(url_for('index'))
     return render_template('index.html', title='home',
-        top_graded=top_graded, newbies=newbies)
+        top_graded=top_graded, newbies=newbies, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -197,7 +207,7 @@ def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grad
     elif sort_by == 1:
         reviews = reviews.order_by(Review.timestamp.desc())
     else:
-        render_template('404.html'), 404
+        return abort(404)
     return reviews
 
 @app.route('/movies/<id>/reviews')

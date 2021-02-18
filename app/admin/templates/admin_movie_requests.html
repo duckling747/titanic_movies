@@ -1,0 +1,44 @@
+{% extends "admin.html" %}
+{% block adminstuff %}
+    <section>
+        <h2>Requests:</h2>
+        {% if reqs %}
+        <div class="adm-table">
+            <form method="POST" action="">
+                <input name="csrf_token" value={{ csrf_token() }} type="hidden" />
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="color-bg-main">user</th>
+                            <th class="color-bg-main">request</th>
+                            <th class="color-bg-main">details</th>
+                            <th class="color-bg-main">datetime added</th>
+                            <th class="color-bg-main">select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in reqs %}
+                        <tr>
+                            <td>{{ r.user.username }}</td>
+                            <td>
+                                {{ r.name }}{% if r.year %}, {{ r.year }}{% endif %}
+                            </td>
+                            <td>{{ r.other_info }}</td>
+                            <td>{{ r.timestamp }}</td>
+                            <td>
+                                <input class="read_request" type="checkbox" name="deletable"
+                                    value={{ r.id }} />
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <input type="submit" name="some" value="Delete selected requests" />
+                <input type="submit" name="all" value="Delete all" />
+            </form>
+        </div>
+        {% else %}
+        <p>No requests at this time</p>
+        {% endif %}
+    </section>
+{% endblock adminstuff %}
