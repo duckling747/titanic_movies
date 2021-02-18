@@ -21,7 +21,7 @@
                 <ol>
                     {% for m in top_graded %}
                         <li>
-                            <a href="{{ url_for('movie_details', id=m.id) }}">
+                            <a href="{{ url_for('main.movie_details', id=m.id) }}">
                                 {{ m.title }}, {{ m.year }}
                             </a>
                             (grade average {{ m.avg }})
@@ -40,7 +40,7 @@
                     {% for n in newbies %}
                         <li>
                             {{ n.timestamp.date() }}: 
-                            <a href="{{ url_for('movie_details', id=n.id) }}">{{ n.title }}, {{ n.year }}</a>
+                            <a href="{{ url_for('main.movie_details', id=n.id) }}">{{ n.title }}, {{ n.year }}</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -57,7 +57,7 @@
             comprehensive movie database. You also get to request new movies that are not yet included
             by filling the members-only request form.
         </p>
-        <p>What are you waiting for? <a href="{{ url_for('register') }}">Click here</a> to sign up!</p>
+        <p>What are you waiting for? <a href="{{ url_for('main.register') }}">Click here</a> to sign up!</p>
     {% else %}
         <h2>Hungry and want for more?</h2>
         <p>

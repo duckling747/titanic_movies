@@ -11,7 +11,7 @@
                 <dt class="color-bg-secondary">{{ ns.prev }}</dt>
             {% endif %}
             <dd>
-                <a href="{{ url_for('movie_details', id=m.id) }}">{{ m.title }}, {{ m.year }}</a>
+                <a href="{{ url_for('main.movie_details', id=m.id) }}">{{ m.title }}, {{ m.year }}</a>
             </dd>
 
         {% else %}

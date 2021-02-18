@@ -1,13 +1,13 @@
 <div class="single-review">
     <div class="single-review-left color-bg-secondary">
         <div>
-            <img class="img-review-box" src="{{ url_for('image', id=review.user_id, img=review.image) }}" alt="profile picture">
+            <img class="img-review-box" src="{{ url_for('main.image', id=review.user_id, img=review.image) }}" alt="profile picture">
         </div>
         <div class="review-user-info"><small>{{ review.timestamp.date() }}</small><br><strong>{{ review.username }}</strong></div>
     </div>
     <div class="single-review-right">
         {% if review.title and review.year %}
-            <strong>For the movie <a href="{{ url_for('movie_details', id=review.movie_id) }}"><i>{{ review.title }}, {{ review.year }}</i></a></strong>
+            <strong>For the movie <a href="{{ url_for('main.movie_details', id=review.movie_id) }}"><i>{{ review.title }}, {{ review.year }}</i></a></strong>
         {% endif %}
         <p><b>Thought: </b>{{ review.thoughts }}</p>
         <p><b>Felt: </b>{{ review.feelings }}</p>

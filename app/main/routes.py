@@ -6,6 +6,7 @@ from flask import (
     request,
     abort,
     send_from_directory,
+    current_app,
 )
 from flask_login import (
     current_user,
@@ -17,10 +18,8 @@ from sqlalchemy.sql import (
     func,
     desc
 )
-from app import (
-    app,
-    db,
-)
+from app import db
+from app.main import bp
 from app.models import (
     User,
     Movie,
@@ -41,8 +40,8 @@ import imghdr
 import os
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/index', methods=['GET', 'POST'])
 def index():
     top_graded = Movie.query.join(Review)\
         .with_entities(Movie.title, Movie.year, Movie.id, func.round(func.avg(Review.grade), 2)\
@@ -57,29 +56,29 @@ def index():
         db.session.add(movreq)
         db.session.commit()
         flash('Request sent!')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     return render_template('index.html', title='home',
         top_graded=top_graded, newbies=newbies, form=form)
 
-@app.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data)\
             or user.disabled:
             flash('invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     return render_template('login.html', title='login', form=form)
 
-@app.route('/logout')
+@bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 def validate_image(stream):
     header = stream.read(512)
@@ -89,8 +88,8 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
-@app.route('/profile/<id>/images', defaults={'img': ''}, methods=['GET', 'POST'])
-@app.route('/profile/<id>/images/<img>', methods=['GET', 'POST'])
+@bp.route('/profile/<id>/images', defaults={'img': ''}, methods=['GET', 'POST'])
+@bp.route('/profile/<id>/images/<img>', methods=['GET', 'POST'])
 @login_required
 def image(id, img):
     user = User.query.get_or_404(id)
@@ -100,23 +99,23 @@ def image(id, img):
         filename = image_file.filename
         if filename != '':
             file_ext = os.path.splitext(filename)[1]
-            if file_ext not in app.config['UPLOAD_EXTENSIONS'] or\
+            if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or\
                 file_ext != validate_image(image_file.stream):
                 return render_template('400.html'), 400
             filename = id + '.' + datetime.now().strftime('%Y%m%d%H%M%S%f')
             user.image = filename
             db.session.add(user)
             db.session.commit()
-            image_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-            return redirect(url_for('profile'))
+            image_file.save(os.path.join(current_app.config['UPLOAD_PATH'], filename))
+            return redirect(url_for('main.profile'))
         return '', 204
-    path = app.config['UPLOAD_PATH']
+    path = current_app.config['UPLOAD_PATH']
     if img and os.path.isfile(os.path.join(path, img)):
         return send_from_directory(path, img)
     else:
-        return send_from_directory(app.config['IMAGES_PATH'], 'cactus.jpg')
+        return send_from_directory(current_app.config['IMAGES_PATH'], 'cactus.jpg')
 
-@app.route('/profile', methods=['GET', 'POST'])
+@bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     page = request.args.get('page', default=1, type=int)
@@ -136,19 +135,19 @@ def profile():
             db.session.add(current_user)
             db.session.commit()
             flash('Password changed!')
-            return redirect(url_for('profile'))
+            return redirect(url_for('main.profile'))
         else:
             change_pw_form.oldpassword.errors.append('Incorrect old password')
-    links = construct_page_links('profile', reviews)
+    links = construct_page_links('main.profile', reviews)
     return render_template('profile.html', title='profile',
         current_page=reviews.page, total_pages=reviews.pages,
         next_page=links[0], prev_page=links[1] , first_page=links[2], last_page=links[3],
         change_pw_form=change_pw_form, profile_pic_form=profile_pic_form, reviews=reviews.items)
 
-@app.route('/register', methods=['GET', 'POST'])
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data)
@@ -156,15 +155,15 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Registered succesfully')
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     return render_template('register.html', title='register', form=form)
 
-@app.route('/browse')
+@bp.route('/browse')
 def browse():
     movies = Movie.query.order_by(Movie.title.asc()).all()
     return render_template('browse.html', title='browse', movies=movies)
 
-@app.route('/movies/<id>', methods=['GET', 'POST'])
+@bp.route('/movies/<id>', methods=['GET', 'POST'])
 @login_required
 def movie_details(id):
     m = Movie.query.get_or_404(id)
@@ -184,7 +183,7 @@ def movie_details(id):
         db.session.add(review)
         db.session.commit()
         flash('Review sent succesfully')
-        return redirect(url_for('movie_details', id=id))
+        return redirect(url_for('main.movie_details', id=id))
     return render_template('movie_details.html', title='movie_details',
         movie=m, reviews=reviews, form=form)
 
@@ -210,7 +209,7 @@ def construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grad
         return abort(404)
     return reviews
 
-@app.route('/movies/<id>/reviews')
+@bp.route('/movies/<id>/reviews')
 @login_required
 def reviews(id):
     m = Movie.query\

@@ -46,14 +46,14 @@
         <header>
             <nav>
                 <div>Titanic Movies 
-                    <a href="{{ url_for('index') }}">Home</a>
-                    <a href="{{ url_for('browse') }}">Browse movies</a>
+                    <a href="{{ url_for('main.index') }}">Home</a>
+                    <a href="{{ url_for('main.browse') }}">Browse movies</a>
                     {% if current_user.is_anonymous %}
-                        <a href="{{ url_for('login') }}">Login</a>
-                        <a href="{{ url_for('register') }}">Register</a>
+                        <a href="{{ url_for('main.login') }}">Login</a>
+                        <a href="{{ url_for('main.register') }}">Register</a>
                     {% else %}
-                        <a href="{{ url_for('profile') }}">Profile</a>
-                        <a href="{{ url_for('logout') }}">Logout</a>
+                        <a href="{{ url_for('main.profile') }}">Profile</a>
+                        <a href="{{ url_for('main.logout') }}">Logout</a>
                     {% endif %}
                 </div>
                 {% if current_user.is_authenticated %}
