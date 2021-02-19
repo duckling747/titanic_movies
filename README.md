@@ -1,7 +1,7 @@
 # Titanic Movies
 It's a database-utilizing software project for the University of Helsinki course "Tietokantasovellus", 3rd period 2021. 
 ## What does it do?
-It'a web app that let's you review movies, as long as the administrators have added them in. 
+It's a web app that let's you review movies, as long as the administrators have added them in. 
 ## Running it
 The app uses docker heavily: presuming Linux or similar, run it in development mode by issuing `docker-compose up` from the command line inside the project root directory. This requires that you have a working installation of both docker and docker-compose. 
 ### First run
