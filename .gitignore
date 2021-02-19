@@ -2,4 +2,4 @@
 **/venv
 .flaskenv
 .env
-**/uploads/**
+**/uploads/[0-9]*
