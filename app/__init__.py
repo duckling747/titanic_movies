@@ -40,7 +40,7 @@ limiter = Limiter(
     default_limits=["2 per second"],
 )
 login = LoginManager()
-login.login_view = 'login'
+login.login_view = 'main.login'
 
 def init_app(conf_class=Config):
     app = Flask(__name__)
