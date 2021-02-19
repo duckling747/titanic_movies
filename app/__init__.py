@@ -31,10 +31,6 @@ csp = {
         'https://www.youtube.com',
     ],
 }
-talisman = Talisman(
-    content_security_policy=csp,
-    content_security_policy_nonce_in=['script-src'],
-)
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["60 per minute"],
@@ -49,9 +45,12 @@ def init_app(conf_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     csrf.init_app(app)
-    talisman.init_app(app)
     limiter.init_app(app)
-    
+    Talisman(
+        app,
+        content_security_policy=csp,
+        content_security_policy_nonce_in=['script-src'],
+    )
     from app.error import bp as error_bp
     from app.admin import bp as admin_bp
     from app.main import bp as main_bp
