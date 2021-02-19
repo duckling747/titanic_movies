@@ -195,7 +195,9 @@ dd {
     font-size: medium;
     margin: 0;
     padding: 0 0 0 12px;
-    white-space: nowrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 .flex-entry {
@@ -380,4 +382,8 @@ nav#nav-pagination-links {
     width: 0;
     z-index: -1;
     float: right;
+}
+
+input {
+    max-width: 100%;
 }
