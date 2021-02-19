@@ -249,3 +249,8 @@ def testme_create_admin():
         db.session.add(u)
         db.session.commit()
     return '', 200
+
+@bp.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(current_app.root_path, 'static'),
+        'favicon.ico', mimetype='image/vnd.microsoft.icon')
