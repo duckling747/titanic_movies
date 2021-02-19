@@ -37,7 +37,7 @@ talisman = Talisman(
 )
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["2 per second"],
+    default_limits=["60 per minute"],
 )
 login = LoginManager()
 login.login_view = 'main.login'

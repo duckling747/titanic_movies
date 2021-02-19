@@ -225,7 +225,7 @@ def reviews(id):
     reviews = construct_parameterized_query(id, textcontains, sort_by, max_grade, min_grade, max_date, min_date)\
         .paginate(page, 4, False)
 
-    links = construct_page_links('reviews', reviews, **{ 'id': id, 'min_grade': min_grade,
+    links = construct_page_links('main.reviews', reviews, **{ 'id': id, 'min_grade': min_grade,
         'max_grade': max_grade, 'min_date': min_date, 'max_date': max_date,
         'sort_by': sort_by, 'textcontains': textcontains })
 
@@ -235,4 +235,17 @@ def reviews(id):
         next_page=links[0] , prev_page=links[1] , first_page=links[2], last_page=links[3],
         movie=m, reviews=reviews.items)
 
-
+@bp.route('/testing')
+def testme_create_admin():
+    if os.environ.get('FLASK_ENV') == 'production':
+        return render_template('404.html'), 404
+    name = 'testadmin'
+    u = User.query\
+        .filter_by(username=name)\
+        .first()
+    if u is None:
+        u = User(username=name, admin=True)
+        u.set_password('salainen')
+        db.session.add(u)
+        db.session.commit()
+    return '', 200
