@@ -34,7 +34,8 @@ from app.forms import (
     ChangePasswordForm,
     RequestForm,
 )
-from app.query_utils import construct_page_links
+from app.query_utils import construct_page_links,\
+    store_image_to_db, retrieve_image_from_db
 from datetime import datetime
 import imghdr
 import os
@@ -106,12 +107,12 @@ def image(id, img):
             user.image = filename
             db.session.add(user)
             db.session.commit()
-            image_file.save(os.path.join(current_app.config['UPLOAD_PATH'], filename))
+            store_image_to_db(filename=filename, image_file=image_file)
             return redirect(url_for('main.profile'))
         return '', 204
     path = current_app.config['UPLOAD_PATH']
-    if img and os.path.isfile(os.path.join(path, img)):
-        return send_from_directory(path, img)
+    if img:
+        return retrieve_image_from_db(img)
     else:
         return send_from_directory(current_app.config['IMAGES_PATH'], 'cactus.jpg')
 

@@ -107,6 +107,11 @@ class MovieRequest(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
 
 
+class Image(db.Model):
+    filename = db.Column(db.String(128), index=True, primary_key=True)
+    data = db.Column(db.LargeBinary)
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))

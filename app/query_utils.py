@@ -1,4 +1,6 @@
 from flask import url_for
+from app import db
+from app.models import Image
 
 
 def construct_page_links(page_name, collection, **kwargs):
@@ -15,3 +17,15 @@ def construct_page_links(page_name, collection, **kwargs):
     if collection.pages > 1 and collection.page < collection.pages else None
 
     return (next_page, prev_page, first_page, last_page)
+
+def store_image_to_db(filename, image_file):
+    img = Image(filename=filename, data=image_file.read())
+    db.session.add(img)
+    db.session.commit()
+
+def retrieve_image_from_db(filename):
+    img = Image.query.get(filename)
+    if img is not None:
+        return img.data
+    else:
+        return None
